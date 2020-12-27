@@ -34,27 +34,14 @@ Submissions
  * @return {string}
  */
 var convertToTitle = function(n) {
-    const chars = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 
-                    'H', 'I', 'J', 'K', 'L', 'M', 'N', 
-                    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 
-                    'V', 'W', 'X', 'Y', 'Z'];
-    
-    let numDigits = 1;
-    let target = n;
-    while(target / (26**(numDigits-1)) > 26){
-        target -= 26**numDigits;
-        numDigits++;
-    }
-    let remaining = n;
-    let output = '';
-    for(let i = numDigits-1; i >= 0; i--){
-        let tempRemaining = remaining;
-        for(let j = i-1; j >= 0; j--){
-            tempRemaining -= 26**j;
-        }
-        let currPower = Math.floor(tempRemaining/26**i);
-        output += chars[currPower-1];
-        remaining -= currPower * 26**i;
+    let digit = 0;
+    let output = ''
+    while(n > 0){
+        let val = ((n % (26**(digit+1))) / (26**(digit)));
+        val = val || 26;
+        n -= val * 26**digit;
+        output = String.fromCodePoint(64 + val) + output;
+        digit++;
     }
     return output;
 };
