@@ -25,15 +25,8 @@ var majorityElement = function(nums) {
         } else {
             hashMap[nums[i]] = 1;
         }
-    }
-    let maxCount = 0;
-    let maxVal;
-    let keys = Object.keys(hashMap);
-    for(let i = 0; i < keys.length; i++){
-        if(hashMap[keys[i]] > maxCount){
-            maxCount = hashMap[keys[i]];
-            maxVal = keys[i];
+        if(hashMap[nums[i]] > nums.length/2){
+            return nums[i];
         }
     }
-    return maxVal;
 };
