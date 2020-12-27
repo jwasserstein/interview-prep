@@ -41,32 +41,22 @@ It is guaranteed that the list represents a number that does not have leading ze
  * @return {ListNode}
  */
 var addTwoNumbers = function(l1, l2) {
-    let first = 0n;
-    let digit = 0n;
-    while(l1){
-        first += BigInt(l1.val) * 10n**digit;
-        digit++;
-        l1 = l1.next;
-    }
-    
-    let second = 0n;
-    digit = 0n;
-    while(l2){
-        second += BigInt(l2.val) * 10n**digit;
-        digit++;
-        l2 = l2.next;
-    }
-    
-    let sum = first + second;
     const root = new ListNode();
-    root.val = sum % 10n;
-    sum = sum/10n;
+    root.val = (l1.val + l2.val) % 10;
+    let carry = Math.floor((l1.val + l2.val)/10);
+    l1 = l1?.next;
+    l2 = l2?.next;
     let currNode = root;
-    while(sum > 0n){
+    
+    while(l1 || l2 || carry){
         currNode.next = new ListNode();
-        currNode.next.val = sum % 10n;
-        sum = sum/10n;
         currNode = currNode.next;
+        let first = l1?.val || 0;
+        let second = l2?.val || 0;
+        currNode.val = (carry + first + second) % 10;
+        carry = Math.floor((carry+first+second)/10);
+        l1 = l1?.next;
+        l2 = l2?.next;
     }
     return root;
 };
