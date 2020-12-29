@@ -37,3 +37,21 @@ var reverseList = function(head) {
     }
     return root;
 };
+
+var reverseListRecursive = function(head) {
+    if(head === null) return null;
+    
+    const root = new ListNode();
+    function recursiveReverse(node){       
+        if(!node.next){
+            root.val = node.val;
+            return root;
+        }
+        
+        const prevNode = recursiveReverse(node.next);
+        prevNode.next = new ListNode(node.val);
+        return prevNode.next;
+    }
+    recursiveReverse(head);
+    return root;
+};
