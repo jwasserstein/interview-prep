@@ -43,3 +43,18 @@ var reverseBits = function(n) {
     }
     return Number(output);
 };
+
+var reverseBitsRecursive = function(n) {
+    n = n.toString(2);
+    
+    function recursiveReverse(str){
+        if(str.length < 2) return str;
+        
+        return str[str.length-1] + recursiveReverse(str.slice(1, str.length-1)) + str[0];
+    }
+    let output = "0b" + recursiveReverse(n);
+    while(output.length < 34){
+        output += "0";
+    }
+    return Number(output);
+}
