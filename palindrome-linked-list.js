@@ -42,3 +42,46 @@ var isPalindrome = function(head) {
     }
     return true;
 };
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @return {boolean}
+ */
+var isPalindrome2 = function(head) {
+    if(!head || !head.next) return true;
+    
+    let fast = head;
+    let slow = head;
+    // Advance fast to end and slow to mid-way point
+    while(fast !== null && fast.next !== null){
+        fast = fast.next.next;
+        slow = slow.next;
+    }
+    
+    // Reverse second half and revert fast back to beginning
+    fast = head;
+    let prev = null;
+    let next = slow.next;
+    while(next){
+        slow.next = prev;
+        prev = slow;
+        slow = next;
+        next = next.next;
+    }
+    slow.next = prev;
+    
+    // Check for palindrome
+    while(slow && fast){
+        if(slow.val !== fast.val) return false;
+        slow = slow.next;
+        fast = fast.next;
+    }
+    return true;
+};
