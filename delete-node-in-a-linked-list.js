@@ -59,3 +59,8 @@ var deleteNode = function(node) {
         node = node.next;
     }
 };
+
+var deleteNode2 = function(node) {   
+    node.val = node.next.val;
+    node.next = node.next.next;
+};
