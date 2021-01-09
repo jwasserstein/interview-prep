@@ -27,3 +27,14 @@ var addDigits = function(num) {
     } while (sum > 9)
     return sum;
 };
+
+/**
+ * @param {number} num
+ * @return {number}
+ */
+var addDigits2 = function(num) {
+    if(num === 0) return 0;
+    
+    const remainder = num % 9;
+    return remainder === 0 ? 9 : remainder;
+};
