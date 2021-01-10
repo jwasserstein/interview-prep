@@ -51,3 +51,19 @@ var missingNumber = function(nums) {
 
     return set.values().next().value;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var missingNumber2 = function(nums) {
+    let idealSum = 0;
+    let actualSum = 0;
+    
+    for(let i = 0; i < nums.length; i++){
+        idealSum += i;
+        actualSum += nums[i];
+    }
+    idealSum += nums.length;
+    return idealSum - actualSum;
+};
