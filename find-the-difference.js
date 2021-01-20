@@ -57,3 +57,19 @@ var findTheDifference = function(s, t) {
     
     return '';
 };
+
+/**
+ * @param {string} s
+ * @param {string} t
+ * @return {character}
+ */
+var findTheDifference2 = function(s, t) {
+    let sum = 0;
+    for(let i = 0; i < t.length; i++){
+        sum += t.codePointAt(i);
+    }
+    for(let i = 0; i < s.length; i++){
+        sum -= s.codePointAt(i);
+    }
+    return String.fromCodePoint(sum);
+};
