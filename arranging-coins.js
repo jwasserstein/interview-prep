@@ -42,3 +42,28 @@ var arrangeCoins = function(n) {
     }
     return rows;
 };
+
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var arrangeCoins2 = function(n) {
+    if(n < 2) return n;
+    
+    let left = 0;
+    let right = n;
+    
+    while(left < right) {
+        const guess = Math.floor((left + right)/2);
+        const sum = (guess*(guess+1))/2;
+        if(sum > n){
+            right = guess;
+        } else {
+            if(sum + guess + 1 > n) {
+                return guess;
+            } else {
+                left = guess;
+            }
+        }
+    }
+};
