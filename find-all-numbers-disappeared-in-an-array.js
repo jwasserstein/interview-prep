@@ -51,3 +51,18 @@ var findDisappearedNumbers2 = function(nums) {
     out = out.slice(0, swapPos);
     return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var findDisappearedNumbers3 = function(nums) {
+    let out = [];
+    for(let i = 0; i < nums.length; i++){
+        nums[Math.abs(nums[i])-1] = Math.abs(nums[Math.abs(nums[i])-1]) * -1;
+    }
+    for(let i = 0; i < nums.length; i++){
+        if(nums[i] > 0) out.push(i+1);
+    }
+    return out;
+};
