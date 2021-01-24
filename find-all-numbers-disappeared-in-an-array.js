@@ -28,3 +28,26 @@ var findDisappearedNumbers = function(nums) {
     }
     return Object.keys(map);
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var findDisappearedNumbers2 = function(nums) {
+    let out = [];
+    for(let i = 1; i <= nums.length; i++){
+        out.push(i);
+    }
+    for(let i = 0; i < nums.length; i++){
+        out[nums[i]-1] = 0;
+    }
+    let swapPos = 0;
+    for(let i = 0; i < out.length; i++){
+        if(out[i] !== 0) {
+            [out[swapPos], out[i]] = [out[i], out[swapPos]];
+            swapPos++;
+        }
+    }
+    out = out.slice(0, swapPos);
+    return out;
+};
