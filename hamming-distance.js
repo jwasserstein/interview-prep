@@ -39,3 +39,20 @@ var hammingDistance = function(x, y) {
     
     return count;
 };
+
+/**
+ * @param {number} x
+ * @param {number} y
+ * @return {number}
+ */
+var hammingDistance2 = function(x, y) {
+    let xor = Number(x ^ y).toString(2);
+
+    let count = 0;
+    for(let i = 0; i < xor.length; i++){
+        if(+xor[i]) count++;
+    }
+    
+    return count;
+};
+
