@@ -56,3 +56,15 @@ var hammingDistance2 = function(x, y) {
     return count;
 };
 
+/**
+ * @param {number} x
+ * @param {number} y
+ * @return {number}
+ */
+var hammingDistance3 = function(x, y) {
+    let count = 0;
+    for(let i = 0; i < 31; i++){
+        if((x&(1<<i)) !== (y&(1<<i))) count++;
+    }
+    return count;
+};
