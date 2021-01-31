@@ -69,3 +69,51 @@ var getIntersectionNode = function(headA, headB) {
     }
     return null;
 };
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+
+/**
+ * @param {ListNode} headA
+ * @param {ListNode} headB
+ * @return {ListNode}
+ */
+var getIntersectionNode2 = function(headA, headB) {
+    let lenA = 0;
+    let lenB = 0;
+    let currNodeA = headA;
+    let currNodeB = headB;
+    
+    while(currNodeA){
+        lenA++;
+        currNodeA = currNodeA.next;
+    }
+    while(currNodeB){
+        lenB++;
+        currNodeB = currNodeB.next;
+    }
+    
+    currNodeA = headA;
+    currNodeB = headB;
+    while(lenB > lenA){
+        currNodeB = currNodeB.next;
+        lenB--;
+    }
+    while(lenA > lenB){
+        currNodeA = currNodeA.next;
+        lenA--;
+    }
+    
+    while(currNodeA && currNodeB) {
+        if(currNodeA === currNodeB) return currNodeA;
+        currNodeA = currNodeA.next;
+        currNodeB = currNodeB.next;
+    }
+    
+    return null;
+};
