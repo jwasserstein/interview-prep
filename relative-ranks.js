@@ -33,3 +33,21 @@ var findRelativeRanks = function(nums) {
     }
     return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {string[]}
+ */
+var findRelativeRanks2 = function(nums) {
+    let arr = nums.map((val, idx) => ({val, idx}));
+    arr.sort((a, b) => b.val - a.val);
+    
+    let out = [];
+    arr.forEach((a, i) => {
+        if(i === 0)         out[a.idx] = 'Gold Medal';
+        else if (i === 1)   out[a.idx] = 'Silver Medal';
+        else if (i === 2)   out[a.idx] = 'Bronze Medal';
+        else                out[a.idx] = String(i+1);
+    });
+    return out;
+};
