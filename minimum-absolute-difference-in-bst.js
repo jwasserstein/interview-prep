@@ -60,3 +60,33 @@ var getMinimumDifference = function(root) {
     
     return min;
 };
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var getMinimumDifference2 = function(root) {
+    if(!root) return 0;
+    if(!root.left && !root.right) return 0;
+    
+    let lastVal;
+    let min;
+    function inOrder(node){        
+        if(node.left) inOrder(node.left);
+        if(!min || (lastVal && (node.val - lastVal < min))) {
+            min = node.val - lastVal;
+        }
+        lastVal = node.val;
+        if(node.right) inOrder(node.right);
+    }
+    inOrder(root);
+    return min;
+};
