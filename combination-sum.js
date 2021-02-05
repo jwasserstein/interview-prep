@@ -71,3 +71,26 @@ var combinationSum = function(candidates, target) {
     
     return out;
 };
+
+/**
+ * @param {number[]} candidates
+ * @param {number} target
+ * @return {number[][]}
+ */
+var combinationSum2 = function(candidates, target) {
+    const out = [];
+    
+    function recursiveSum(t, sol, idx){
+        if(t < 0) return;
+        else if(t === 0) {
+            out.push(sol);
+            return;
+        }
+        
+        for(let i = idx; i < candidates.length; i++){
+            recursiveSum(t-candidates[i], [...sol, candidates[i]], i);
+        }
+    }
+    recursiveSum(target, [], 0);
+    return out;
+};
