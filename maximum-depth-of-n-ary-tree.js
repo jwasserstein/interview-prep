@@ -48,3 +48,19 @@ var maxDepth = function(root) {
     
     return maxD + 1;
 };
+
+var maxDepth2 = function(root) {
+    if(!root) return 0;
+    if(root.children.length === 0) return 1;
+    
+    let queue = [];
+    root.children.forEach(c => queue.push({node: c, depth: 2}));
+    
+    let maxDepth = 2;
+    while(queue.length > 0){
+        const obj = queue.shift();
+        obj.node.children.forEach(c => queue.push({node: c, depth: obj.depth+1}));
+        maxDepth = Math.max(maxDepth, obj.depth);
+    }
+    return maxDepth;
+};
