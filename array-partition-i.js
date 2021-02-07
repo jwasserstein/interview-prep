@@ -38,3 +38,38 @@ var arrayPairSum = function(nums) {
     }
     return sum;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var arrayPairSum2 = function(nums) {
+    quickSort(nums, 0, nums.length-1);
+    let sum = 0;
+    for(let i = 0; i < nums.length; i+= 2){
+        sum += nums[i];
+    }
+    return sum;
+};
+
+function quickSort(arr, leftBound, rightBound){
+    if(rightBound <= leftBound) return;
+    
+    let pivot = rightBound;
+    let left = leftBound;
+    let right = rightBound - 1;
+    while(left <= right){
+        if(arr[left] > arr[pivot] && arr[right] < arr[pivot]) {
+            [arr[left], arr[right]] = [arr[right], arr[left]];
+            left++;
+            right--;
+        } else {
+            if(arr[left] <= arr[pivot]) left++;
+            if(arr[right] >= arr[pivot]) right--;
+        }
+    }
+    [arr[left], arr[pivot]] = [arr[pivot], arr[left]];
+    pivot = left;
+    quickSort(arr, leftBound, pivot-1);
+    quickSort(arr, pivot+1, rightBound);
+}
