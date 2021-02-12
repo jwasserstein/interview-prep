@@ -59,3 +59,31 @@ var preorder = function(root) {
     
     return out;
 };
+
+/**
+ * // Definition for a Node.
+ * function Node(val, children) {
+ *    this.val = val;
+ *    this.children = children;
+ * };
+ */
+
+/**
+ * @param {Node} root
+ * @return {number[]}
+ */
+var preorder2 = function(root) {
+    if(!root) return [];
+    
+    const out = [];
+    const stack = [root];
+    while(stack.length > 0){
+        const currNode = stack.pop();
+        out.push(currNode.val);
+        for(let i = currNode.children.length-1; i >= 0; i--){
+            stack.push(currNode.children[i]);
+        }
+    }
+    
+    return out;
+};
