@@ -57,3 +57,31 @@ var postorder = function(root) {
     
     return out;
 };
+
+/**
+ * // Definition for a Node.
+ * function Node(val,children) {
+ *    this.val = val;
+ *    this.children = children;
+ * };
+ */
+
+/**
+ * @param {Node} root
+ * @return {number[]}
+ */
+var postorder2 = function(root) {
+    if(!root) return [];
+    
+    const out = [];
+    const stack = [root];
+    while(stack.length > 0){
+        const currNode = stack.pop();
+        out.unshift(currNode.val);
+        for(let i = 0; i < currNode.children.length; i++){
+            stack.push(currNode.children[i]);
+        }
+    }
+    
+    return out;
+};
