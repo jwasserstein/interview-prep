@@ -59,3 +59,24 @@ var findLHS = function(nums) {
     }
     return maxLen;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var findLHS = function(nums) {
+    const map = {};
+    for(let i = 0; i < nums.length; i++){
+        if(map[nums[i]] === undefined) map[nums[i]] = 1;
+        else map[nums[i]]++;
+    }
+    
+    const keys = Object.keys(map);
+    let maxLen = 0;
+    for(let i = 0; i < keys.length; i++){
+        if(map[+keys[i]+1] !== undefined) {
+            maxLen = Math.max(maxLen, map[+keys[i]] + map[+keys[i]+1]);
+        }
+    }
+    return maxLen;
+};
