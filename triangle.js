@@ -51,3 +51,21 @@ Follow up: Could you do this using only O(n) extra space, where n is the total n
     
     return Math.min(...sols[sols.length-1]);
 };
+
+/**
+ * @param {number[][]} triangle
+ * @return {number}
+ */
+ var minimumTotalConstSpace = function(triangle) {
+    for(let row = 1; row < triangle.length; row++){
+        for(let col = 0; col < triangle[row].length; col++){
+            const upperRight = triangle[row-1][col] !== undefined ? 
+                                triangle[row-1][col] : Infinity;
+            const upperLeft = triangle[row-1][col-1] !== undefined ? 
+                                triangle[row-1][col-1] : Infinity;
+            triangle[row][col] = Math.min(upperRight, upperLeft) + triangle[row][col];
+        }
+    }
+    
+    return Math.min(...triangle[triangle.length-1]);
+};
