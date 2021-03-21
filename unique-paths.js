@@ -58,3 +58,21 @@ It's guaranteed that the answer will be less than or equal to 2 * 109.
     }
     return recursivePath(m, n);
 };
+
+/**
+ * @param {number} m
+ * @param {number} n
+ * @return {number}
+ */
+ var uniquePathsTab = function(m, n) {
+    const sols = new Array(m).fill(0).map(() => new Array(n));
+    for(let row = 0; row < m; row++){
+        for(let col = 0; col < n; col++){
+            const left = sols[row]?.[col-1] || 0;
+            const up = sols[row-1]?.[col] || 0;
+            sols[row][col] = left + up;
+            if(row === 0 && col === 0) sols[row][col] = 1;
+        }
+    }
+    return sols[m-1][n-1];
+};
