@@ -59,3 +59,37 @@ var threeSum = function(nums) {
     
     return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+ var threeSumTwoPointer = function(nums) {
+    if(nums.length < 3) return [];
+    
+    nums.sort((a, b) => a - b);
+    
+    const out = [];
+    let i = 0;
+    while(i < nums.length){
+        const target = 0 - nums[i];
+        
+        let left = i + 1, right = nums.length - 1;
+        while(left < right){
+            const currVal = nums[left] + nums[right];
+            if(currVal < target) {
+                left++;
+            } else if (currVal > target) {
+                right--;
+            } else {
+                out.push([nums[i], nums[left], nums[right]]);
+                const lastVal = nums[left];
+                while(nums[left] === lastVal) left++;
+            }
+        }
+        const lastVal = nums[i];
+        while(nums[i] === lastVal) i++;
+    }
+    
+    return out;
+};

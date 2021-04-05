@@ -55,3 +55,42 @@ Constraints:
     
     return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[][]}
+ */
+ var fourSumTwoPointer = function(nums, target) {
+    nums.sort((a, b) => a - b);
+    
+    const out = [];
+    let i = 0;
+    while(i < nums.length){
+        let j = i + 1;
+        while(j < nums.length){
+            const targetVal = target - (nums[i] + nums[j]);
+            
+            let left = j + 1, right = nums.length - 1;
+            while(left < right){
+                const currVal = nums[left] + nums[right];
+                if(currVal < targetVal) {
+                    left++
+                } else if (currVal > targetVal) {
+                    right--;
+                } else {
+                    out.push([nums[i], nums[j], nums[left], nums[right]]);
+                    const currNum = nums[left];
+                    while(nums[left] === currNum) left++;
+                }
+            }
+            
+            const currNum = nums[j];
+            while(nums[j] === currNum) j++;
+        }
+        const currNum = nums[i];
+        while(nums[i] === currNum) i++;
+    }
+    
+    return out;
+};
