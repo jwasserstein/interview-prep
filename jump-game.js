@@ -49,3 +49,15 @@ Constraints:
     
     return true;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+ var canJumpBottomUp = function(nums) { 
+    let yIdx = nums.length-1;
+    for(let i = nums.length-2; i >= 0; i--){
+        if(nums[i] >= (yIdx - i)) yIdx = i;
+    }
+    return yIdx === 0;
+};
