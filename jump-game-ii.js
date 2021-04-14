@@ -45,3 +45,19 @@ Constraints:
     
     return jumps[0];
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+ var jumpLinear = function(nums) {
+    let jumps = 0, jumpEnd = 0, farthest = 0;
+    for(let i = 0; i < nums.length; i++){
+        farthest = Math.max(farthest, nums[i] + i);
+        if(i >= jumpEnd && i !== nums.length-1){
+            jumpEnd = farthest;
+            jumps++;
+        }
+    }
+    return jumps;
+};
