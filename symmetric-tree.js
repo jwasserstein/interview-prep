@@ -91,3 +91,47 @@ Follow up: Could you solve it both recursively and iteratively?
     }
     return true;
 };
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {boolean}
+ */
+var isSymmetric = function(root) {
+if (!root.left && !root.right) {
+    return true;
+} else if (!root.left || !root.right) {
+    return false;
+}
+
+function recursiveCompare(l, r) {
+    if (l.val !== r.val) {
+    return false;
+    }
+    
+    let outerEqual = false;
+    if (l.left && r.right) {
+    outerEqual = recursiveCompare(l.left, r.right);
+    } else if (!l.left && !r.right) {
+    outerEqual = true;
+    }
+    
+    let innerEqual = false;
+    if (l.right && r.left) {
+    innerEqual = recursiveCompare(l.right, r.left);
+    } else if (!l.right && !r.left) {
+    innerEqual = true;
+    }
+    
+    return outerEqual && innerEqual;
+}
+
+return recursiveCompare(root.left, root.right);
+};
