@@ -131,3 +131,32 @@ Recursive solution is trivial, could you do it iteratively?
     
     return out;
 };
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[]}
+ */
+ var inorderTraversal = function(root) {
+    const out = [];
+    
+    function recursiveInorder(node) {
+      if (!node) {
+        return;
+      }
+      recursiveInorder(node.left);
+      out.push(node.val);
+      recursiveInorder(node.right);
+    }
+    
+    recursiveInorder(root);
+    
+    return out;
+  };
