@@ -37,4 +37,33 @@ var sortedArrayToBST = function(nums) {
     root.left = sortedArrayToBST(nums.slice(0, startingIndex));
     root.right = sortedArrayToBST(nums.slice(startingIndex+1));
     return root;
-};  
+};
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {number[]} nums
+ * @return {TreeNode}
+ */
+var sortedArrayToBST = function(nums) {
+  function getNode(l, r) {
+    if (r === l) {
+      return new TreeNode(nums[l], null, null);
+    } else if (r - l === 1) {
+      const rNode = new TreeNode(nums[r], null, null);
+      const lNode = new TreeNode(nums[l], null, null);
+      rNode.left = lNode;
+      return rNode;
+    }
+    
+    const midPoint = Math.round((l + r) / 2);
+    return new TreeNode(nums[midPoint], getNode(l, midPoint-1), getNode(midPoint+1, r));
+  }
+  return getNode(0, nums.length-1);
+}
