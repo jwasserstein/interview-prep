@@ -52,3 +52,56 @@ var getRow = function(rowIndex) {
     }
     return currentRow;
 };
+
+/**
+ * @param {number} rowIndex
+ * @return {number[]}
+ */
+var getRow = function(rowIndex) {
+  if (rowIndex === 0) {
+    return [1];
+  } else if (rowIndex === 1) {
+    return [1, 1];
+  }
+
+  let prevRow = [1, 1];
+  let row;
+  for(let i = 2; i <= rowIndex; i++) {
+    const rowLength = i + 1;
+    row = new Array(rowLength);
+    row[0] = 1;
+    for(let j = 1; j < rowLength - 1; j++) {
+      row[j] = prevRow[j-1] + prevRow[j];
+    }
+    row[rowLength-1] = 1;
+    prevRow = row;
+  }
+  return row;
+};
+
+/**
+ * @param {number} rowIndex
+ * @return {number[]}
+ */
+var getRow = function(rowIndex) {
+    if (rowIndex === 0) {
+      return [1];
+    } else if (rowIndex === 1) {
+      return [1, 1];
+    }
+  
+    let prevRow = [1, 1];
+    let row;
+    for(let i = 2; i <= rowIndex; i++) {
+      const rowLength = i + 1;
+      row = new Array(rowLength);
+      row[0] = 1;
+      for(let j = 1; j < rowLength - 1; j++) {
+        row[j] = prevRow[j-1] + prevRow[j];
+      }
+      row[rowLength-1] = 1;
+      prevRow = row;
+    }
+    return row;
+};
+  
