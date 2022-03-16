@@ -33,3 +33,24 @@ var generate = function(numRows) {
     }
     return result;
 };
+
+/**
+ * @param {number} numRows
+ * @return {number[][]}
+ */
+var generate = function(numRows) {
+    const out = [[1]];
+    for(let i = 1; i < numRows; i++) {
+      let rowLength = i + 1;
+      const row = [];
+      for(let j = 0; j < rowLength; j++) {
+        if (j === 0 || j === rowLength - 1) {
+          row.push(1);
+        } else {
+          row.push(out[i-1][j-1] + out[i-1][j]);
+        }   
+      }
+      out.push(row);
+    }
+    return out;
+  };
