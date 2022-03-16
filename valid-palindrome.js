@@ -47,3 +47,37 @@ var isPalindrome = function(s) {
     }
     return true;
 };
+
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isPalindrome = function(s) {
+    const validChars = new Set(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']);
+    
+    let left = 0;
+    let right = s.length-1;
+    while (left < right) {
+      let leftChar = s[left].toLowerCase();
+      const rightChar = s[right].toLowerCase();
+  
+      if (!validChars.has(leftChar)) {
+        left++;
+        continue;
+      }
+      if (!validChars.has(rightChar)) {
+        right--;
+        continue;
+      }
+      
+      if (leftChar !== rightChar) {
+        return false;
+      }
+      
+      left++;
+      right--;
+    }
+    
+    return true;
+};
+  
