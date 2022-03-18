@@ -45,3 +45,24 @@ var convertToTitle = function(n) {
     }
     return output;
 };
+
+/**
+ * @param {number} columnNumber
+ * @return {string}
+ */
+var convertToTitle = function(columnNumber) {
+    let str = '';
+    let i = 0;
+    while (columnNumber > 0) {
+      const value = ((columnNumber-1) % 26**(i+1) + 1)/(26**i);
+      str = getDigit(value) + str;
+      columnNumber -= value * 26**i;
+      i++;
+    }
+    
+    return str;
+};
+  
+function getDigit(val) {
+    return String.fromCodePoint(64 + val);
+}
