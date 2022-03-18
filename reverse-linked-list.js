@@ -55,3 +55,36 @@ var reverseListRecursive = function(head) {
     recursiveReverse(head);
     return root;
 };
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @return {ListNode}
+ */
+var reverseList = function(head) {
+    if (!head || !head.next) {
+      return head;
+    }
+    
+    let prevNode = head;
+    let currNode = head.next;
+    let nextNode = head.next.next;
+  
+    prevNode.next = null;
+  
+    while (currNode) {
+      currNode.next = prevNode;
+      prevNode = currNode;
+      currNode = nextNode;
+      nextNode = nextNode?.next;
+    }
+    
+    return prevNode;
+};
+  
