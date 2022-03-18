@@ -97,3 +97,63 @@ MyStack.prototype.empty = function() {
  * var param_3 = obj.top()
  * var param_4 = obj.empty()
  */
+
+
+var MyStack = function() {
+    this.data = [[],[]];
+    this.ptr = 0;
+};
+
+/** 
+ * @param {number} x
+ * @return {void}
+ */
+MyStack.prototype.push = function(x) {
+    this.data[this.ptr].push(x);
+};
+
+/**
+ * @return {number}
+ */
+MyStack.prototype.pop = function() {
+    let val;
+    const targetQueue = Number(!this.ptr);
+    while (this.data[this.ptr].length > 1) {
+        this.data[targetQueue].push(this.data[this.ptr].shift());
+    }
+    val = this.data[this.ptr][0];
+    this.data[this.ptr] = [];
+    this.ptr = targetQueue;
+    return val;
+};
+
+/**
+ * @return {number}
+ */
+MyStack.prototype.top = function() {
+    let val;
+    const targetQueue = Number(!this.ptr);
+    while (this.data[this.ptr].length > 1) {
+        this.data[targetQueue].push(this.data[this.ptr].shift());
+    }
+    val = this.data[this.ptr][0];
+    this.data[targetQueue].push(this.data[this.ptr].shift());
+    this.ptr = targetQueue;
+    return val;
+};
+
+/**
+ * @return {boolean}
+ */
+MyStack.prototype.empty = function() {
+    return this.data[this.ptr].length === 0;
+};
+
+/** 
+ * Your MyStack object will be instantiated and called as such:
+ * var obj = new MyStack()
+ * obj.push(x)
+ * var param_2 = obj.pop()
+ * var param_3 = obj.top()
+ * var param_4 = obj.empty()
+ */
