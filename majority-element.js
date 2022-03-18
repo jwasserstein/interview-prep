@@ -30,3 +30,31 @@ var majorityElement = function(nums) {
         }
     }
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var majorityElement = function(nums) {
+    const counts = {};
+    
+    for(let i = 0; i < nums.length; i++) {
+      if (nums[i] in counts) {
+        counts[nums[i]]++;
+      } else {
+        counts[nums[i]] = 1;
+      }
+    }
+    
+    let maxKey;
+    let maxCount = 0;
+    const keys = Object.keys(counts);
+    for(let i = 0; i < keys.length; i++) {
+      if (counts[keys[i]] > maxCount) {
+        maxCount = counts[keys[i]];
+        maxKey = keys[i];
+      }
+    }
+    
+    return maxKey;
+};
