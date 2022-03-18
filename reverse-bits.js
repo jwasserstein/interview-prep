@@ -58,3 +58,19 @@ var reverseBitsRecursive = function(n) {
     }
     return Number(output);
 }
+
+/**
+ * @param {number} n - a positive integer
+ * @return {number} - a positive integer
+ */
+var reverseBits = function(n) {
+    let out = 0n;
+    for(let i = 0n; i < 32n; i++) {
+      const inputI = 31n - i;
+      const bit = (BigInt(n) & (1n << inputI)) >> inputI;
+  
+      out += bit << i;
+    }
+    return out;
+};
+  
