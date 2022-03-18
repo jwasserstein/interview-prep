@@ -43,3 +43,16 @@ var titleToNumber = function(s) {
     }
     return sum;
 };
+
+/**
+ * @param {string} columnTitle
+ * @return {number}
+ */
+var titleToNumber = function(columnTitle) {
+    let columnNumber = 0;
+    for(let i = columnTitle.length-1; i >= 0; i--) {
+      const value = columnTitle.charCodeAt(i) - 64;
+      columnNumber += value * 26**(columnTitle.length - 1 - i);
+    }
+    return columnNumber;
+};
