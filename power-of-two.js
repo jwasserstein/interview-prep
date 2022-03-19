@@ -67,3 +67,16 @@ var isPowerOfTwo2 = function(n) {
 var isPowerOfTwo3 = function(n) {
     return (n > 0) && (n & (n-1)) === 0;
 };
+
+/**
+ * @param {number} n
+ * @return {boolean}
+ */
+var isPowerOfTwo = function(n) {
+    for(let i = 0; i < 32; i++) {
+      if (n === 2**i) {
+        return true;
+      }
+    }
+    return false;
+};
