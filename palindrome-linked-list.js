@@ -85,3 +85,93 @@ var isPalindrome2 = function(head) {
     }
     return true;
 };
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @return {boolean}
+ */
+var isPalindrome = function(head) {
+    const vals = [];
+    let node = head;
+    while (node) {
+      vals.push(node.val);
+      node = node.next;
+    }
+    
+    let left = 0;
+    let right = vals.length-1;
+    while (left < right) {
+      if (vals[left] !== vals[right]) {
+        return false;
+      }
+      left++;
+      right--;
+    }
+    return true;
+}
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @return {boolean}
+ */
+var isPalindrome = function(head) {
+    if (!head.next) { // 1 nodes
+      return true;
+    }
+    if (!head.next.next) { // 2 nodes
+      return head.val === head.next.val;
+    }
+    if (!head.next.next.next) { // 3 nodes
+      return head.val === head.next.next.val;
+    }
+    if (!head.next.next.next.next) { // 4 nodes
+      return head.val === head.next.next.next.val
+        && head.next.val === head.next.next.val;
+    }
+    
+    let len = 2;
+    let slow = head;
+    let fast = head.next;
+    while (fast) {
+      if (fast.next) len++;
+      if (fast.next?.next) len++;
+      slow = slow.next;
+      fast = fast.next?.next;
+    }
+    
+    let prev = null;
+    let curr = head;
+    let next = curr.next;
+    while (curr !== slow) {
+      curr.next = prev;
+      prev = curr;
+      curr = next;
+      next = next.next;
+    }
+    
+    let left = prev;
+    let right = len % 2 === 0 ? slow : slow.next;
+    while (left && right) {
+      if (left.val !== right.val) {
+        return false;
+      }
+      left = left.next;
+      right = right.next;
+    }
+    return true;
+};
+  
