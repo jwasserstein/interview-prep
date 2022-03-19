@@ -75,3 +75,28 @@ var summaryRanges = function(nums) {
     }
     return ranges;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {string[]}
+ */
+var summaryRanges = function(nums) {
+    let output = [];
+    let start = 0;
+    let i = 0;
+    while (i < nums.length) {
+      while (i < (nums.length-1) && nums[i+1] - nums[i] === 1) {
+        i++;
+      }
+      let range = String(nums[start]);
+      if (start < i) {
+        range += `->${nums[i]}`;
+      }
+      output.push(range);
+      i++;
+      start = i;
+    }
+    
+    return output;
+};
+  
