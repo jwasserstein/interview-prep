@@ -64,3 +64,27 @@ var deleteNode2 = function(node) {
     node.val = node.next.val;
     node.next = node.next.next;
 };
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+/**
+ * @param {ListNode} node
+ * @return {void} Do not return anything, modify node in-place instead.
+ */
+var deleteNode = function(node) {
+    let next = node.next;
+    
+    while (next.next) {
+      node.val = next.val;
+      node = next;
+      next = next.next;
+    }
+    node.val = next.val;
+    node.next = null;
+};
+  
