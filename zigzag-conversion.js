@@ -61,3 +61,28 @@ var convert = function(s, numRows) {
     }
     return out;
 };
+
+/**
+ * @param {string} s
+ * @param {number} numRows
+ * @return {string}
+ */
+var convert = function(s, numRows) {
+    if (numRows === 1) {
+      return s;
+    }
+  
+    let out = '';
+    for(let i = 0; i < numRows; i++) {
+      let j = i;
+      while(j < s.length) {
+        out += s[j] || "";
+        j += (numRows-1-i)*2;
+        if (i > 0 && i < numRows-1) {
+          out += s[j] || "";
+        }
+        j += i*2;
+      }
+    }
+    return out;
+};
