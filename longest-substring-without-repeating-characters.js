@@ -52,3 +52,23 @@ var lengthOfLongestSubstring = function(s) {
     maxLength = Math.max(maxLength, count);
     return maxLength;
 };
+
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var lengthOfLongestSubstring = function(s) {
+    const seen = new Set();
+    let start = 0;
+    let maxLen = 0;
+    for(let i = 0; i < s.length; i++) {
+      while (seen.has(s[i])) {
+        seen.delete(s[start]);
+        start++;
+      }
+      maxLen = Math.max(maxLen, (i - start) + 1);
+      seen.add(s[i]);
+    }
+    return maxLen;
+};
+  
