@@ -42,3 +42,32 @@ var isAnagram = function(s, t) {
     }
     return Object.keys(hashMap).length === 0;
 };
+
+/**
+ * @param {string} s
+ * @param {string} t
+ * @return {boolean}
+ */
+var isAnagram = function(s, t) {
+    const counts = {};
+    
+    for (let i = 0; i < s.length; i++) {
+      if (s[i] in counts) {
+        counts[s[i]]++;
+      } else {
+        counts[s[i]] = 1;
+      }
+    }
+    
+    for (let i = 0; i < t.length; i++) {
+      if (!(t[i] in counts)) {
+        return false;
+      }
+      counts[t[i]]--;
+      if (counts[t[i]] === 0) {
+        delete counts[t[i]];
+      }
+    }
+    
+    return Object.keys(counts).length === 0;
+};
