@@ -48,3 +48,34 @@ var binaryTreePaths = function(root) {
     recurse(root);
     return output;
 };
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {string[]}
+ */
+var binaryTreePaths = function(root) {
+    const out = [];
+    
+    function recursivePath(node, path) {
+      let newPath;
+      if (!path) {
+        newPath = `${node.val}`;
+      } else {
+        newPath = `${path}->${node.val}`;
+      }
+      if (node.left) recursivePath(node.left, newPath);
+      if (node.right) recursivePath(node.right, newPath);
+      if (!node.left && !node.right) out.push(newPath);
+    }
+    
+    recursivePath(root, '');
+    return out;
+};
