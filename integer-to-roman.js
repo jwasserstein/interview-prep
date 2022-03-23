@@ -78,3 +78,38 @@ var intToRoman = function(num) {
     }
     return out;
 };
+
+/**
+ * @param {number} num
+ * @return {string}
+ */
+var intToRoman = function(num) {
+    const vals = [
+      { sym: 'I', val: 1 },
+      { sym: 'IV', val: 4 },
+      { sym: 'V', val: 5 },
+      { sym: 'IX', val: 9 },
+      { sym: 'X', val: 10 },
+      { sym: 'XL', val: 40 },
+      { sym: 'L', val: 50 },
+      { sym: 'XC', val: 90 },
+      { sym: 'C', val: 100 },
+      { sym: 'CD', val: 400 },
+      { sym: 'D', val: 500 },
+      { sym: 'CM', val: 900 },
+      { sym: 'M', val: 1000 },
+    ];
+    
+    let out = '';
+    for(let i = vals.length-1; i >= 0; i--) {
+      if (vals[i].val > num) continue;
+      
+      const chars = Math.floor(num / vals[i].val);
+      for(let j = 0; j < chars; j++) out += vals[i].sym;
+      
+      num -= vals[i].val*chars;
+    }
+    
+    return out;
+};
+  
