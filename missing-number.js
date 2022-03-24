@@ -67,3 +67,22 @@ var missingNumber2 = function(nums) {
     idealSum += nums.length;
     return idealSum - actualSum;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var missingNumber = function(nums) {
+    let idealSum = 0;
+    for(let i = 0; i <= nums.length; i++) {
+      idealSum += i;
+    }
+    
+    let actualSum = 0;
+    for(let i = 0; i < nums.length; i++) {
+      actualSum += nums[i];
+    }
+  
+    return idealSum - actualSum;
+};
+  
