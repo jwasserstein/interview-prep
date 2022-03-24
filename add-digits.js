@@ -38,3 +38,28 @@ var addDigits2 = function(num) {
     const remainder = num % 9;
     return remainder === 0 ? 9 : remainder;
 };
+
+/**
+ * @param {number} num
+ * @return {number}
+ */
+var addDigits = function(num) {
+    while (num > 9) {
+      let val = num;
+      let i = 0;
+      let tempSum = 0;
+      while (val > 0) {
+        const digit = getDigit(val, i);
+        tempSum += digit;
+        val -= digit * 10**i;
+        i++;
+      }
+      num = tempSum;
+    }
+    return num;
+  };
+  
+  function getDigit(num, n) {
+    return Math.floor((num % 10**(n+1))/(10**n));
+}
+  
