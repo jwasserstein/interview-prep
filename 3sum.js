@@ -93,3 +93,76 @@ var threeSum = function(nums) {
     
     return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var threeSum = function(nums) {
+    nums.sort();
+    
+    const out = [];
+  
+    let i = 0;
+    while(i < nums.length) {
+      if (nums[i] > 0) break;
+  
+      const target = 0 - nums[i];
+      const seen = new Set();
+      for(let j = i + 1; j < nums.length; j++) {
+        if (seen.has(target - nums[j])) {
+          const sol = [nums[i], nums[j], target - nums[j]];
+          out.push(sol);
+          j = nextDist(j, nums) - 1;
+        }
+        seen.add(nums[j]);
+      }
+      
+      i = nextDist(i, nums);
+    }
+    return out;
+  };
+  
+  function nextDist(n, nums) {
+    let i = n;
+    while (i < nums.length && nums[i] === nums[n]) i++;
+    return i;
+} 
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var threeSum = function(nums) {
+    nums.sort((a, b) => a - b);
+    
+    const out = [];
+  
+    let i = 0;
+    while(i < nums.length) {
+      if (nums[i] > 0) break;
+  
+      const target = 0 - nums[i];
+      let left = i+1;
+      let right = nums.length-1;
+      while (left < right) {
+        if (nums[left] + nums[right] === target) {
+          out.push([nums[left], nums[right], nums[i]]);
+          left = nextDist(left, nums, 1);
+        } else if (nums[left] + nums[right] > target) {
+          right = nextDist(right, nums, -1);
+        } else {
+          left = nextDist(left, nums, 1);
+        }
+      }
+      i = nextDist(i, nums, 1);
+    }
+    return out;
+  };
+  
+  function nextDist(n, nums, incr) {
+    let i = n;
+    while (i < nums.length && nums[i] === nums[n]) i += incr;
+    return i;
+}
+  
