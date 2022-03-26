@@ -94,3 +94,47 @@ Constraints:
     
     return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[][]}
+ */
+var fourSum = function(nums, target) {
+    if (nums.length < 4) return [];
+    
+    nums.sort((a, b) => a - b);
+    
+    const out = [];
+    let i = 0;
+    while (i < nums.length - 3) {    
+      let j = i + 1;
+      while (j < nums.length - 2) {
+        let left = j + 1;
+        let right = nums.length - 1;
+        
+        while (left < right) {
+          const sum = nums[i] + nums[j] + nums[left] + nums[right];
+          if (sum === target) {
+            out.push([nums[i], nums[j], nums[left], nums[right]]);
+            left = nextDistinct(left, nums, 1);
+          } else if (sum < target) {
+            left = nextDistinct(left, nums, 1);
+          } else {
+            right = nextDistinct(right, nums, -1);
+          }
+        }
+        j = nextDistinct(j, nums, 1);
+      }
+      i = nextDistinct(i, nums, 1);
+    }
+    
+    return out;
+  };
+  
+  function nextDistinct(n, nums, dir) {
+    let i = n;
+    while (nums[n] === nums[i]) i += dir;
+    return i;
+}
+  
