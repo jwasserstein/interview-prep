@@ -54,3 +54,40 @@ Constraints:
     
     return closestTarget;
 };
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var threeSumClosest = function(nums, target) {
+    nums.sort((a, b) => a - b);
+    
+    let bestSum;
+    let bestError;
+  
+    for(let i = 0; i < nums.length - 1; i++) {
+      let left = i + 1;
+      let right = nums.length - 1;
+      
+      while (left < right) {
+        const sum = nums[i] + nums[left] + nums[right];
+        const error = Math.abs(target - sum);
+        if (bestError === undefined || error < bestError) {
+          bestSum = sum;
+          bestError = error;
+        }
+  
+        if (sum === target) {
+          return sum;
+        } else if (sum < target) {
+          left++;
+        } else {
+          right--;
+        }
+      }
+    }
+    
+    return bestSum;
+};
+  
