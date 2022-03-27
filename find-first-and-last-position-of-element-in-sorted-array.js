@@ -101,3 +101,49 @@ nums is a non-decreasing array.
     
     return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[]}
+ */
+var searchRange = function(nums, target) {
+    return [findLeftEdge(nums, target), findRightEdge(nums, target)];
+  };
+  
+  function findLeftEdge(nums, target) {
+    let left = 0;
+    let right = nums.length - 1;
+    let guess = Math.round((left + right) / 2);
+    
+    if (nums[left] === target) return left;
+    if (nums[right] === target && nums[right-1] !== target) return right;
+    
+    while (right - left > 1) {
+      if (nums[guess] === target && nums[guess-1] !== target) return guess;
+      else if (nums[guess] < target) left = guess;
+      else right = guess;
+      guess = Math.round((left + right) / 2);
+    }
+    
+    return -1;
+  }
+  
+  function findRightEdge(nums, target) {
+    let left = 0;
+    let right = nums.length - 1;
+    let guess = Math.round((left + right) / 2);
+    
+    if (nums[right] === target) return right;
+    if (nums[left] === target && nums[left+1] !== target) return left;
+    
+    while (right - left > 1) {
+      if (nums[guess] === target && nums[guess+1] !== target) return guess;
+      else if (nums[guess] > target) right = guess;
+      else left = guess;
+      guess = Math.round((left + right) / 2);
+    }
+    
+    return -1;
+}
+  
