@@ -40,3 +40,25 @@ Constraints:
     
     return out;
 };
+
+/**
+ * @param {number} n
+ * @return {string[]}
+ */
+var generateParenthesis = function(n) {
+  
+    const out = [];
+    function recursiveParen(str, openRemain, closeRemain) {
+      if (openRemain === 0 && closeRemain === 0) {
+        out.push(str);
+        return;
+      }
+      
+      if (openRemain > 0) recursiveParen(`${str}(`, openRemain-1, closeRemain);
+      if (closeRemain > 0 && closeRemain > openRemain) recursiveParen(`${str})`, openRemain, closeRemain-1);
+    }
+    
+    recursiveParen('', n, n);
+    return out;
+};
+  
