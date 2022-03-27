@@ -64,3 +64,35 @@ Follow up: Can you achieve this in O(log n) time complexity?
     if(nums[right] === target) return right;
     return -1;
 };
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var search = function(nums, target) {
+    let left = 0;
+    let right = nums.length - 1;
+    let guess = Math.round((left + right) / 2);
+    
+    if (nums[left] === target) return left;
+    if (nums[right] === target) return right;
+    
+    while (right - left > 1) {
+      if (nums[guess] > nums[0] && target < nums[0]) {
+        left = guess;
+      } else if (nums[guess] < nums[0] && target > nums[0]) {
+        right = guess;
+      } else if (nums[guess] > target) {
+        right = guess;
+      } else if (nums[guess] < target) {
+        left = guess;
+      } else {
+        return guess;
+      }
+      guess = Math.round((left + right) / 2);
+    }
+  
+    return -1;
+};
+  
