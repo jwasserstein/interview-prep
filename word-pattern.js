@@ -58,3 +58,30 @@ var wordPattern = function(pattern, s) {
     }
     return true;
 };
+
+/**
+ * @param {string} pattern
+ * @param {string} s
+ * @return {boolean}
+ */
+var wordPattern = function(pattern, s) {
+    const patternMap = {};
+    const usedWords = new Set();
+    const sentence = s.split(' ');
+    
+    if (pattern.length !== sentence.length) return false;
+    
+    for(let i = 0; i < pattern.length; i++) {
+      const char = pattern[i];
+      if (char in patternMap) {
+        if (patternMap[char] !== sentence[i]) return false;
+      } else {
+        if (usedWords.has(sentence[i])) return false;
+        patternMap[char] = sentence[i];
+        usedWords.add(sentence[i]);
+      }
+    }
+    
+    return true;
+};
+  
