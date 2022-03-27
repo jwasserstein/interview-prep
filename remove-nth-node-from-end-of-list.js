@@ -55,3 +55,34 @@ The number of nodes in the list is sz.
     slow.next = slow.next.next;
     return head;
 };
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} head
+ * @param {number} n
+ * @return {ListNode}
+ */
+var removeNthFromEnd = function(head, n) {
+    if (!head.next) return null;
+    
+    let lead = head;
+    for(let i = 0; i < n; i++) lead = lead.next;
+    let curr = head;
+    let trail = new ListNode(null, head);
+    while (lead) {
+      lead = lead.next;
+      curr = curr.next;
+      trail = trail.next;
+    }
+    
+    if (curr === head) return head.next;
+    trail.next = curr.next;
+    
+    return head;
+};
