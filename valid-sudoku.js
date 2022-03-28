@@ -88,3 +88,60 @@ board[i][j] is a digit or '.'.
     
     return true;
 };
+
+/**
+ * @param {character[][]} board
+ * @return {boolean}
+ */
+var isValidSudoku = function(board) {
+    for (let rowIdx = 0; rowIdx < board.length; rowIdx++) {
+      const rowSet = new Set();
+      for (let colIdx = 0; colIdx < board[rowIdx].length; colIdx++) {
+        const col = board[rowIdx][colIdx];
+        if (col !== '.') {
+          if (rowSet.has(col)) return false;
+          rowSet.add(col);
+        }
+      }
+    }
+    
+    for (let colIdx = 0; colIdx < board[0].length; colIdx++) {
+      const colSet = new Set();
+      for (let rowIdx = 0; rowIdx < board.length; rowIdx++) {
+        const row = board[rowIdx][colIdx];
+        if (row !== '.') {
+          if (colSet.has(row)) return false;
+          colSet.add(row);
+        }
+      }
+    }
+    
+    for (let colIdx = 0; colIdx < board[0].length; colIdx++) {
+      const colSet = new Set();
+      for (let rowIdx = 0; rowIdx < board.length; rowIdx++) {
+        const row = board[rowIdx][colIdx];
+        if (row !== '.') {
+          if (colSet.has(row)) return false;
+          colSet.add(row);
+        }
+      }
+    }
+    
+    for (let x = 0; x < board.length; x += 3) {
+      for (let i = 0; i < board.length; i += 3) {
+        const boxSet = new Set();
+        for (let j = 0; j < board.length / 3; j++) {
+          const c = i + j;
+          for (let k = 0; k < board.length / 3; k++) {
+            const r = x + k;
+            if (board[r][c] !== '.') {
+              if (boxSet.has(board[r][c])) return false;
+              boxSet.add(board[r][c]);
+            }
+          }
+        }
+      }
+    }
+    
+    return true;
+};
