@@ -60,3 +60,45 @@ var combinationSum2 = function(candidates, target) {
     recursiveSum([], target, 0);    
     return out;
 };
+
+/**
+ * @param {number[]} candidates
+ * @param {number} target
+ * @return {number[][]}
+ */
+var combinationSum2 = function(candidates, target) {
+    candidates.sort((a, b) => a - b);
+  
+    const out = [];
+    function recursiveSum(nums, sum, idx) {
+      if (sum > target) {
+        return;
+      } else if (sum === target) {
+        out.push(nums);
+        return;
+      }
+      
+      let sol = false;
+      let i = idx;
+      while (i < candidates.length) {
+        recursiveSum(
+          nums.concat(candidates[i]),
+          sum + candidates[i],
+          i + 1
+        );
+        i = nextDistinct(candidates, i);
+      }
+      return sol;
+    }
+    
+    recursiveSum([], 0, 0);
+    return out;
+  };
+  
+  function nextDistinct(arr, i) {
+    const val = arr[i];
+    let j = i;
+    while (arr[j] === arr[i]) j++;
+    return j;
+}
+  
