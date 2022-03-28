@@ -81,3 +81,30 @@ var countAndSayIterative = function(n) {
     
     return say;
 };
+
+/**
+ * @param {number} n
+ * @return {string}
+ */
+var countAndSay = function(n) {
+    const tab = ['', '1'];
+    for (let i = 2; i <= n; i++) {
+      let str = '';
+      
+      const prev = tab[i-1];
+      let j = 0;
+      while (j < prev.length) {
+        let count = 1;
+        while (prev[j+1] !== undefined && prev[j] === prev[j+1]) {
+          count++;
+          j++;
+        }
+        str += `${count}${prev[j]}`;
+        j++;
+      }
+      
+      tab.push(str);
+    }
+    
+    return tab[n];
+};
