@@ -94,3 +94,28 @@ var combinationSum2 = function(candidates, target) {
     recursiveSum(target, [], 0);
     return out;
 };
+
+/**
+ * @param {number[]} candidates
+ * @param {number} target
+ * @return {number[][]}
+ */
+var combinationSum = function(candidates, target) {
+    const out = [];
+    function recursiveSum(nums, idx, sum) {
+      if (sum > target) {
+        return;
+      } else if (sum === target) {
+        out.push(nums);
+        return;
+      }
+      
+      for (let i = idx; i < candidates.length; i++) {
+        recursiveSum(nums.concat(candidates[i]), i, sum + candidates[i]);
+      }
+    }
+    
+    recursiveSum([], 0, 0);
+    
+    return out;
+};
