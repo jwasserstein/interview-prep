@@ -61,3 +61,26 @@ Constraints:
     }
     return jumps;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var jump = function(nums) {
+    if (nums.length === 1) return 0;
+    
+    const minJumps = new Array(nums.length).fill(undefined);
+    minJumps[0] = 0;
+    
+    for (let i = 0; i < nums.length; i++) {
+      for (let j = i+1; j <= i+nums[i]; j++) {
+        if (minJumps[j] !== undefined) {
+          minJumps[j] = Math.min(minJumps[i] + 1, minJumps[j]);
+        } else {
+          minJumps[j] = minJumps[i] + 1;
+        }
+        if (j === nums.length-1) return minJumps[j];
+      }
+    }
+};
+  
