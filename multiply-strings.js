@@ -83,3 +83,46 @@ Both num1 and num2 do not contain any leading zero, except the number 0 itself.
     
     return out;
 };
+
+/**
+ * @param {string} num1
+ * @param {string} num2
+ * @return {string}
+ */
+var multiply = function(num1, num2) {
+    if (num1 === '0' || num2 === '0') return '0';
+    
+    let output = '0';
+    for (let i = num2.length-1; i >= 0; i--) {
+      let partialProduct = (new Array(num2.length-1-i)).fill(0).join('');
+      let carry = 0;
+      for (let j = num1.length-1; j >= 0; j--) {
+        const mult = (Number(num1[j]) * Number(num2[i])) + carry;
+        const val = mult % 10;
+        carry = (mult - val) / 10;
+        partialProduct = String(val) + partialProduct;
+      }
+      if (carry > 0) {
+        partialProduct = String(carry) + partialProduct;
+      }
+      output = add(output, partialProduct);
+    }
+    return output;
+  };
+  
+  function add(num1, num2) {
+    let out = '';
+    let carry = 0;
+    let ptr1 = num1.length - 1;
+    let ptr2 = num2.length - 1;
+    while (ptr1 >= 0 || ptr2 >= 0 || carry) {
+      const sum = Number(num1[ptr1] || '0') + Number(num2[ptr2] || '0') + carry;
+      const val = sum % 10;
+      carry = sum >= 10 ? 1 : 0;
+      out = val + out;
+      ptr1--;
+      ptr2--;
+    }
+    return out;
+}
+  
