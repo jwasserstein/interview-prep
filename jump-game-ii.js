@@ -83,4 +83,30 @@ var jump = function(nums) {
       }
     }
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var jump = function(nums) {
+  if (nums.length === 1) return 0;
   
+  let left = 0;
+  let right = 0;
+  let i = 0;
+  let nextRight = 0;
+  let numJumps = 0;
+  while (i < nums.length - 1) {
+    while (i <= right) {
+      if (i + nums[i] >= nums.length - 1) return numJumps + 1;
+
+      nextRight = Math.max(nextRight, i + nums[i]);
+      i++;
+    }
+    numJumps++;
+    left = right + 1;
+    right = nextRight;
+  }
+
+  return numJumps;
+};
