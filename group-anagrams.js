@@ -50,3 +50,21 @@ var groupAnagrams = function(strs) {
     
     return out;
 };
+
+/**
+ * @param {string[]} strs
+ * @return {string[][]}
+ */
+var groupAnagrams = function(strs) {
+    const map = {};
+    for (let i = 0; i < strs.length; i++) {
+      const sortedString = strs[i].split('').sort().join('');
+      if (sortedString in map) {
+        map[sortedString].push(strs[i]);
+      } else {
+        map[sortedString] = [strs[i]];
+      }
+    }
+    
+    return Object.values(map);
+};
