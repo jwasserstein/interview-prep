@@ -66,3 +66,41 @@ n == matrix[i].length
     
     return out;
 };
+
+/**
+ * @param {number[][]} matrix
+ * @return {number[]}
+ */
+var spiralOrder = function(matrix) {
+    const out = [];
+    
+    let left = 0;
+    let right = matrix[0].length-1;
+    let bottom = matrix.length-1;
+    let top = 0;
+  
+    while (right >= left && bottom >= top) {
+      for (let col = left; bottom >= top && col <= right; col++) {
+        out.push(matrix[top][col]);
+      }
+      top++;
+      
+      for (let row = top; right >= left && row <= bottom; row++) {
+        out.push(matrix[row][right]);
+      }
+      right--;
+  
+      for (let col = right; bottom >= top && col >= left; col--) {
+        out.push(matrix[bottom][col]);
+      }
+      bottom--;
+      
+      for (let row = bottom; right >= left && row >= top; row--) {
+        out.push(matrix[row][left]);
+      }
+      left++;
+  
+    }
+      
+    return out;
+};
