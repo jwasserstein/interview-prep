@@ -49,3 +49,37 @@ var permuteUnique = function(nums) {
     recursivePermute([], nums);
     return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var permuteUnique = function(nums) {
+    nums.sort((a, b) => a - b);
+    
+    const out = [];
+    function recursivePermutation(prefix, remaining) {
+      if (remaining.length === 0) {
+        out.push(prefix);
+        return;
+      }
+      
+      let i = 0;
+      while(i < remaining.length) {
+        const newRemaining = remaining.slice();
+        newRemaining.splice(i, 1);
+        recursivePermutation(prefix.concat(remaining[i]), newRemaining);
+        i = nextDistinct(remaining, i);
+      }
+    }
+    
+    recursivePermutation([], nums);
+    return out;
+};
+  
+function nextDistinct(arr, i) {
+    const val = arr[i];
+    let j = i;
+    while (j < arr.length && arr[j] === arr[i]) j++
+    return j;
+}
