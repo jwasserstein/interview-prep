@@ -43,3 +43,23 @@ var permute = function(nums) {
     recursivePermute([], nums);
     return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var permute = function(nums) {
+    const out = [];
+    function recursivePermutation(prefix, remaining) {
+      if (remaining.length === 0) out.push(prefix);
+      
+      for (let i = 0; i < remaining.length; i++) {
+        const newRemaining = remaining.slice();
+        newRemaining.splice(i, 1);
+        recursivePermutation(prefix.concat(remaining[i]), newRemaining);
+      }
+    }
+    
+    recursivePermutation([], nums);
+    return out;
+};
