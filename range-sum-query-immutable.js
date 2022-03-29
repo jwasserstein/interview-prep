@@ -55,3 +55,32 @@ NumArray.prototype.sumRange = function(i, j) {
  * var obj = new NumArray(nums)
  * var param_1 = obj.sumRange(i,j)
  */
+
+/**
+ * @param {number[]} nums
+ */
+var NumArray = function(nums) {
+    this.nums = nums;
+    this.prefixSum = [nums[0]];
+    
+    for (let i = 1; i < nums.length; i++) {
+      this.prefixSum.push(this.prefixSum[i-1] + nums[i]);
+    }
+};
+  
+  /** 
+   * @param {number} left 
+   * @param {number} right
+   * @return {number}
+   */
+NumArray.prototype.sumRange = function(left, right) {
+    const leftSum = left === 0 ? 0 : this.prefixSum[left-1];
+    const rightSum = this.prefixSum[right];
+    return rightSum - leftSum;
+};
+  
+  /** 
+   * Your NumArray object will be instantiated and called as such:
+   * var obj = new NumArray(nums)
+   * var param_1 = obj.sumRange(left,right)
+   */
