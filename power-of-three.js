@@ -46,3 +46,15 @@ var isPowerOfThree = function(n) {
 var isPowerOfThree2 = function(n) {
     return n > 0 && 1162261467 % n === 0;
 };
+
+/**
+ * @param {number} n
+ * @return {boolean}
+ */
+var isPowerOfThree = function(n) {
+    for (let i = 0; i <= 19; i++) {
+      if (n === 3**i) return true;
+    }
+    return false;
+};
+  
