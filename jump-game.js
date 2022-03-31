@@ -61,3 +61,25 @@ Constraints:
     }
     return yIdx === 0;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+var canJump = function(nums) {
+    let farthest = nums[0];
+    let nextFarthest = farthest;
+    let i = 0;
+    while (i < nums.length) {
+      if (nums[i] + i >= nums.length - 1) return true;
+      nextFarthest = Math.max(nextFarthest, nums[i] + i);
+      if (i >= farthest) {
+        if (farthest === nextFarthest) return false;
+        farthest = nextFarthest;
+      }
+  
+      i++;
+    }
+    return true;
+};
+  
