@@ -44,3 +44,23 @@ var merge = function(intervals) {
     out.push([lower, upper]);
     return out;
 };
+
+/**
+ * @param {number[][]} intervals
+ * @return {number[][]}
+ */
+var merge = function(intervals) {
+    intervals.sort((a, b) => a[0] - b[0]);
+  
+    const out = [intervals[0]];
+    for (let i = 1; i < intervals.length; i++) {
+      if (out[out.length-1][1] >= intervals[i][0]) {
+        out[out.length-1][0] = Math.min(out[out.length-1][0], intervals[i][0]);
+        out[out.length-1][1] = Math.max(out[out.length-1][1], intervals[i][1]);
+      } else {
+        out.push(intervals[i]);
+      }
+    }
+  
+    return out;
+};
