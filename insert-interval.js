@@ -70,3 +70,49 @@ newInterval.length == 2
 
     return out;
 };
+
+/**
+ * @param {number[][]} intervals
+ * @param {number[]} newInterval
+ * @return {number[][]}
+ */
+var insert = function(intervals, newInterval) {
+    if (intervals.length === 0) return [newInterval];
+    if (newInterval[1] < intervals[0][0]) {
+      return [newInterval].concat(intervals);
+    }
+    if (newInterval[0] > intervals[intervals.length-1][1]) {
+      return intervals.concat([newInterval]);
+    }
+    
+    const out = [];
+    
+    for (let i = 0; i < intervals.length; i++) {
+      if (newInterval[0] > intervals[i][1]) { // newInterval strictly after interval[i]
+        out.push(intervals[i]);
+      } else if (newInterval[1] < intervals[i][0]) { // newInterval strictly before interval[i]
+        out.push(newInterval);
+        out.push(intervals[i]);
+        for (let j = i + 1; j < intervals.length; j++) {
+          out.push(intervals[j]);
+        }
+        return out;
+      } else { // merge
+        const starting = Math.min(newInterval[0], intervals[i][0]);
+        let ending = Math.max(newInterval[1], intervals[i][1]);
+        while (i < intervals.length -1 && ending >= intervals[i+1][0]) {
+          ending = Math.max(ending, intervals[i+1][1]);
+          i++;
+        }
+        out.push([starting, ending]);
+        
+        for (let j = i + 1; j < intervals.length; j++) {
+          out.push(intervals[j]);
+        }
+        return out;
+      }
+    }
+    
+    return out;
+};
+  
