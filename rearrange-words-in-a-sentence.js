@@ -51,3 +51,36 @@ var arrangeWords = function(text) {
   
   return words.join(' ');
 };
+
+/**
+ * @param {string} text
+ * @return {string}
+ */
+var arrangeWords = function(text) {
+  const lengthMap = {};
+  const words = text.split(' ');
+  words[0] = words[0].toLowerCase();
+  
+  let maxLen = 0;
+  for (let i = 0; i < words.length; i++) {
+    maxLen = Math.max(maxLen, words[i].length);
+    if (words[i].length in lengthMap) {
+      lengthMap[words[i].length].push(words[i]);
+    } else {
+      lengthMap[words[i].length] = [words[i]];
+    }
+  }
+  
+  const out = [];
+  for (let i = 0; i <= maxLen; i++) {
+    const words = lengthMap[i];
+    if (words) {
+      for (let j = 0; j < words.length; j++) {
+        out.push(words[j]);
+      } 
+    }
+  }
+  out[0] = out[0][0].toUpperCase() + out[0].slice(1);
+  
+  return out.join(' ');
+};
