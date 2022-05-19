@@ -68,3 +68,38 @@ var numIslands = function(grid) {
   
   return counter;
 };
+
+/**
+ * @param {character[][]} grid
+ * @return {number}
+ */
+ var numIslands = function(grid) {
+  let counter = 0;
+  
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      if (grid[i][j] === '1') {
+        counter++;
+        exploreIsland(i, j, grid);
+      }
+    }
+  }
+  
+  return counter;
+};
+
+function exploreIsland(i, j, grid) {
+  grid[i][j] = '0';
+  if (i + 1 < grid.length && grid[i+1][j] === '1') {
+    exploreIsland(i+1, j, grid);
+  }
+  if (i - 1 >= 0 && grid[i-1][j] === '1') {
+    exploreIsland(i-1, j, grid);
+  }
+  if (j + 1 < grid[i].length && grid[i][j+1] === '1') {
+    exploreIsland(i, j+1, grid);
+  }
+  if (j - 1 >= 0 && grid[i][j-1] === '1') {
+    exploreIsland(i, j-1, grid);
+  }
+}
