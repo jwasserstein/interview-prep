@@ -46,3 +46,28 @@ Follow up: If you have figured out the O(n) solution, try coding another solutio
 
   return maxSum;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var maxSubArray = function(nums) {
+  const prefixSum = new Array(nums.length);
+  prefixSum[0] = nums[0];
+  for (let i = 1; i < nums.length; i++) {
+    prefixSum[i] = prefixSum[i-1] + nums[i];
+  }
+  
+  const suffixMax = new Array(nums.length);
+  suffixMax[suffixMax.length-1] = prefixSum[nums.length-1];
+  for (let i = suffixMax.length-2; i >= 0; i--) {
+    suffixMax[i] = Math.max(suffixMax[i+1], prefixSum[i]);
+  }
+  
+  let maxSum = -Infinity;
+  for (let i = 0; i < prefixSum.length-1; i++) {
+    maxSum = Math.max(suffixMax[i+1] - prefixSum[i], maxSum);
+  }
+  
+  return Math.max(maxSum, suffixMax[0]);
+};
