@@ -52,3 +52,33 @@ s consists of parentheses only '()[]{}'.
   
   return stack.length === 0;
 };
+
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isValid = function(s) {
+	const bracketMap = {
+		'(': ')',
+		'[': ']',
+		'{': '}'
+  };
+	const stack = [];
+
+	for (let i = 0; i < s.length; i++) {
+		const char = s[i];
+		if (char in bracketMap) {
+			stack.push(char);
+		} else {
+			const peekValue = stack[stack.length-1]; // will be open bracket
+			const expectedBracket = bracketMap[peekValue];
+			if (char !== expectedBracket) {
+				return false;
+			} else {
+				stack.pop();
+			}
+		}
+	}
+	
+	return stack.length === 0;
+};
