@@ -96,3 +96,50 @@ class MaxHeap {
         return val;
     }
 }
+
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
+ */
+var topKFrequent = function(nums, k) {
+    const count = {};
+    for (let i = 0; i < nums.length; i++) {
+      count[nums[i]] = (count[nums[i]] || 0) + 1;
+    }
+    const entries = Object.entries(count);
+    entries.sort((a, b) => b[1] - a[1]);
+    return entries.slice(0, k).map(entry => entry[0]);
+};
+
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
+ */
+var topKFrequent = function(nums, k) {
+    const count = {};
+    for (let i = 0; i < nums.length; i++) {
+      count[nums[i]] = (count[nums[i]] || 0) + 1;
+    }
+  
+    const entries = Object.entries(count);
+    const pq = new MinPriorityQueue();
+    for (let i = 0; i < entries.length; i++) {
+      if (pq.size() < k) {
+        pq.enqueue(entries[i][0], entries[i][1]);
+      } else {
+        if (entries[i][1] > pq.front().priority) {
+          pq.dequeue();
+          pq.enqueue(entries[i][0], entries[i][1]);
+        }
+      }
+    }
+    
+    const out = [];
+    while (pq.size() > 0) {
+      out.push(pq.dequeue().element);
+    }
+    return out;
+};
+  
