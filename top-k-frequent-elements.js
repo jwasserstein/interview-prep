@@ -142,4 +142,45 @@ var topKFrequent = function(nums, k) {
     }
     return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
+ */
+var topKFrequent = function(nums, k) {
+    const count = new Map();
+    for (let i = 0; i < nums.length; i++) {
+      const currentCount = count.get(nums[i]);
+      count.set(nums[i], (currentCount || 0) + 1);
+    }
+  
+    const arr = Array.from(count);
+    bucketSort(arr, 10);
+    
+    return arr.slice(arr.length-k).map(a => a[0]);
+};
+  
+function bucketSort(arr, n) {
+    const buckets = new Array(n).fill(0).map(() => []);
+    const max = Math.max(...arr.map(a => a[1]));
+  
+    for (let i = 0; i < arr.length; i++) {
+      const val = arr[i][1];
+      const bucket = Math.floor((val/max)*(n-1));
+      buckets[bucket].push(arr[i]);
+    }
+  
+    for (let i = 0; i < buckets.length; i++) {
+      buckets[i].sort((a, b) => a[1] - b[1]);
+    }
+    
+    let k = 0;
+    for (let i = 0; i < buckets.length; i++) {
+      for (let j = 0; j < buckets[i].length; j++) {
+        arr[k] = buckets[i][j];
+        k++;
+      }
+    }
+}  
   
