@@ -68,3 +68,23 @@ var groupAnagrams = function(strs) {
     
     return Object.values(map);
 };
+
+/**
+ * @param {string[]} strs
+ * @return {string[][]}
+ */
+var groupAnagrams = function(strs) {
+  const anagramMap = {};
+  for (let i = 0; i < strs.length; i++) {
+    const sortedStr = strs[i].split('').sort().join('');
+    anagramMap[sortedStr] = anagramMap[sortedStr] || [];
+    anagramMap[sortedStr].push(strs[i]);
+  }  
+  const out = [];
+  const entries = Object.entries(anagramMap);
+  for (let i = 0; i < entries.length; i++) {
+    const [key, val] = entries[i];
+    out.push(val);
+  }
+  return out;
+};
