@@ -34,3 +34,21 @@ var productExceptSelf = function(nums) {
     
     return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var productExceptSelf = function(nums) {
+    const out = [1];
+      for (let i = 1; i < nums.length; i++) {
+      out.push(out[i-1]*nums[i-1]);
+      }
+      
+      let suffixProduct = nums[nums.length-1];
+      for (let i = nums.length-2; i >= 0; i--) {
+          out[i] *= suffixProduct;
+          suffixProduct *= nums[i];
+      }
+      return out;
+};
