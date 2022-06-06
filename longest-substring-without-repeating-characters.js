@@ -71,4 +71,34 @@ var lengthOfLongestSubstring = function(s) {
     }
     return maxLen;
 };
+
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var lengthOfLongestSubstring = function(s) {
+  if (s.length === 0) return 0;
+
+  const charSet = new Set([]);
+  let left = 0;
+  let right = 0;
+  let maxLen = 0;
+  
+  while (right < s.length) {
+    if (!charSet.has(s[right])) {
+      charSet.add(s[right]);
+      right++;
+    } else {
+      while (left < right && charSet.has(s[right])) {
+        charSet.delete(s[left]);
+        left++;
+      }
+      charSet.add(s[right]);
+      right++;
+    }
+    maxLen = Math.max(maxLen, (right-left));
+  }
+  
+  return maxLen;
+};
   
