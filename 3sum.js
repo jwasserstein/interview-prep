@@ -165,4 +165,40 @@ var threeSum = function(nums) {
     while (i < nums.length && nums[i] === nums[n]) i += incr;
     return i;
 }
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var threeSum = function(nums) {
+  if (nums.length < 3) return [];
+
+  nums.sort((a, b) => a - b);
   
+  const out = [];
+  let i = 0;
+  while (i < nums.length - 2) {
+    let left = i+1;
+    let right = nums.length-1;
+    while (left < right) {
+      const sum = nums[i] + nums[left] + nums[right];
+      if (sum === 0) {
+        out.push([nums[i], nums[left], nums[right]]);
+        left = findDistinct(nums, left, 1);
+      } else if (sum > 0) {
+        right = findDistinct(nums, right, -1);
+      } else {
+        left = findDistinct(nums, left, 1);
+      }
+    }
+    i = findDistinct(nums, i, 1);
+  }
+
+  return out;
+};
+
+function findDistinct(nums, ptr, incr) {
+  const currVal = nums[ptr];
+  while (nums[ptr] === currVal) ptr += incr;
+  return ptr;
+}
