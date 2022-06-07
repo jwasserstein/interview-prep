@@ -64,3 +64,31 @@ var merge = function(intervals) {
   
     return out;
 };
+
+/**
+ * @param {number[][]} intervals
+ * @return {number[][]}
+ */
+var merge = function(intervals) {
+  if (intervals.length === 1) return intervals;
+
+  intervals.sort((a, b) => a[0] - b[0]);
+  
+  const out = [intervals[0]];
+  for (let i = 1; i < intervals.length; i++) {
+    if (isOverlap(out[out.length-1], intervals[i])) {
+      out[out.length-1] = mergeIntervals(out[out.length-1], intervals[i]);
+    } else {
+      out.push(intervals[i]);
+    }
+  }
+  return out;
+};
+
+function mergeIntervals(a, b) {
+  return [Math.min(a[0], b[0]), Math.max(a[1], b[1])];
+}
+
+function isOverlap(a, b) {
+  return b[0] <= a[1] && a[0] <= b[1];
+}
