@@ -97,3 +97,43 @@ var solution = function(isBadVersion) {
       return isBadVersion(left) ? left : right;
     };
 };
+
+/**
+ * Definition for isBadVersion()
+ * 
+ * @param {integer} version number
+ * @return {boolean} whether the version is bad
+ * isBadVersion = function(version) {
+ *     ...
+ * };
+ */
+
+/**
+ * @param {function} isBadVersion()
+ * @return {function}
+ */
+var solution = function(isBadVersion) {
+  /**
+   * @param {integer} n Total versions
+   * @return {integer} The first bad version
+   */
+  return function(n) {
+    let left = 1;
+    let right = n;
+    
+    if (isBadVersion(left)) return left;
+    if (isBadVersion(right) && !isBadVersion(right-1)) return right;
+    
+    while (right - left > 1) {
+      const guess = Math.round((left + right) / 2);
+      const badVersion = isBadVersion(guess);
+      if (badVersion) {
+        right = guess;
+      } else {
+        left = guess;
+      }
+    }
+    
+    return right;
+  };
+};
