@@ -58,3 +58,36 @@ var canFinish = function(numCourses, prerequisites) {
   return true;
 };
 
+/**
+ * @param {number} numCourses
+ * @param {number[][]} prerequisites
+ * @return {boolean}
+ */
+var canFinish = function(numCourses, prerequisites) {
+  const courseMap = new Map();
+  prerequisites.forEach(prereq => {
+    if (!courseMap.has(prereq[0])) {
+      courseMap.set(prereq[0], []);
+    }
+    courseMap.get(prereq[0]).push(prereq[1]);
+  });
+  
+  const set = new Set();
+  function dfs(num) {
+    if (set.has(num)) return false;
+    set.add(num);
+    const dependencies = courseMap.get(num) || [];
+    for (let i = 0; i < dependencies.length; i++) {
+      if (!dfs(dependencies[i])) return false;
+    }
+    set.delete(num);
+    courseMap.delete(num);
+    return true;
+  }
+  
+  for (const [course] of courseMap) {
+    if (!dfs(course)) return false;
+  }
+  
+  return true;
+};
