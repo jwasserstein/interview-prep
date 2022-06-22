@@ -119,3 +119,27 @@ var combinationSum = function(candidates, target) {
     
     return out;
 };
+
+/**
+ * @param {number[]} candidates
+ * @param {number} target
+ * @return {number[][]}
+ */
+var combinationSum = function(candidates, target) {
+    const out = [];
+    function recursiveSum(start, subTarget, sol) {
+      if (subTarget < 0) return;
+      if (subTarget === 0) return out.push([...sol]);
+      for (let i = start; i < candidates.length; i++) {
+        sol.push(candidates[i]);
+        recursiveSum(i, subTarget - candidates[i], sol);
+        sol.pop();
+      }
+    }
+    
+    for (let i = 0; i < candidates.length; i++) {
+      recursiveSum(i, target - candidates[i], [candidates[i]]);
+    }
+    return out;
+};
+  
