@@ -95,4 +95,40 @@ var search = function(nums, target) {
   
     return -1;
 };
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var search = function(nums, target) {
+  let left = 0;
+  let right = nums.length - 1;
+  let guess;
   
+  if (nums[left] === target) return left;
+  if (nums[right] === target) return right;
+  
+  const targetInRotatedSection = inRotatedSection(target, nums);
+  while (right - left > 1) {
+    guess = Math.floor((left + right) / 2);
+    const guessInRotatedSection = inRotatedSection(nums[guess], nums);
+    if (targetInRotatedSection && !guessInRotatedSection) {
+      right = guess;
+    } else if (!targetInRotatedSection && guessInRotatedSection) {
+      left = guess;
+    } else if (nums[guess] < target) {
+      left = guess;
+    } else if (nums[guess] > target) {
+      right = guess;
+    } else {
+      return guess;
+    }
+  }
+  
+  return -1;
+};
+
+function inRotatedSection(val, nums) {
+  return val > nums[nums.length-1];
+}
