@@ -92,3 +92,30 @@ function mergeIntervals(a, b) {
 function isOverlap(a, b) {
   return b[0] <= a[1] && a[0] <= b[1];
 }
+
+/**
+ * @param {number[][]} intervals
+ * @return {number[][]}
+ */
+var merge = function(intervals) {
+  intervals.sort((a, b) => a[0] - b[0]);
+  
+  const out = [intervals[0]];
+  
+  for (let i = 1; i < intervals.length; i++) {
+    const currInterval = out[out.length-1];
+    if (isOverlap(currInterval, intervals[i])) {
+      out[out.length-1][0] = Math.min(currInterval[0], intervals[i][0]);
+      out[out.length-1][1] = Math.max(currInterval[1], intervals[i][1]);
+    } else {
+      out.push(intervals[i]);
+    }
+  }
+  
+  return out;
+};
+
+function isOverlap(intervalA, intervalB) {
+  return intervalA[1] >= intervalB[0]
+      && intervalB[1] >= intervalA[0];
+}
