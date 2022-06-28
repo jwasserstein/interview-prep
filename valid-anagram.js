@@ -71,3 +71,23 @@ var isAnagram = function(s, t) {
     
     return Object.keys(counts).length === 0;
 };
+
+/**
+ * @param {string} s
+ * @param {string} t
+ * @return {boolean}
+ */
+var isAnagram = function(s, t) {
+  const sCount = {};
+  for (let i = 0; i < s.length; i++) {
+    const char = s[i];
+    sCount[char] = (sCount[char] || 0) + 1;
+  }
+  for (let i = 0; i < t.length; i++) {
+    const char = t[i];
+    if (!(char in sCount)) return false;
+    sCount[char]--;
+    if (sCount[char] < 1) delete sCount[char];
+  }
+  return Object.keys(sCount).length === 0;
+};
