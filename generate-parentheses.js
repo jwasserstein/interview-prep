@@ -62,3 +62,19 @@ var generateParenthesis = function(n) {
     return out;
 };
   
+/**
+ * @param {number} n
+ * @return {string[]}
+ */
+var generateParenthesis = function(n) {
+    const out = []
+    function generateParenthesis(open, close, sol) {
+      if (open === 0 && close === 0) return out.push(sol);
+      
+      if (open > 0) generateParenthesis(open-1, close, `${sol}(`);
+      if (close > open) generateParenthesis(open, close-1, `${sol})`);
+    }
+    generateParenthesis(n, n, '');
+    return out;
+};
+  
