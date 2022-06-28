@@ -51,3 +51,26 @@ Constraints:
 
   return left;
 };
+
+/**
+ * @param {number} x
+ * @return {number}
+ */
+var mySqrt = function(x) {
+  let left = 0;
+  let right = 46341;
+  let guess;
+  
+  if (left*left === x) return left;
+  if (right*right === x) return right;
+
+  while (right - left > 1) {
+    guess = Math.floor((left + right) / 2);
+    const guessVal = guess * guess;
+    if (guessVal === x) return guess;
+    else if (guessVal > x) right = guess;
+    else left = guess;
+  }
+  
+  return left;
+};
