@@ -132,3 +132,33 @@ var search = function(nums, target) {
 function inRotatedSection(val, nums) {
   return val > nums[nums.length-1];
 }
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var search = function(nums, target) {
+  let left = 0;
+  let right = nums.length-1;
+  
+  if (nums[left] === target) return left;
+  if (nums[right] === target) return right;
+  
+  while (right - left > 1) {
+    const guess = Math.round((left + right) / 2);
+    if (nums[guess] >= nums[0] && target < nums[0]) {
+      left = guess;
+    } else if (nums[guess] < nums[0] && target >= nums[0]) {
+      right = guess;
+    } else if (nums[guess] > target) {
+      right = guess;
+    } else if (nums[guess] < target) {
+      left = guess;
+    } else {
+      return guess;
+    }
+  }
+  
+  return -1;
+};
