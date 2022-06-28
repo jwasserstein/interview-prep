@@ -102,3 +102,27 @@ var lengthOfLongestSubstring = function(s) {
   return maxLen;
 };
   
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var lengthOfLongestSubstring = function(s) {
+  if (s.length === 0) return 0;
+
+  const chars = new Set([s[0]]);
+  let maxLen = 1;
+  let left = 0;
+  let right = 1;
+  
+  while (right < s.length) {
+    while (chars.has(s[right])) {
+      chars.delete(s[left]);
+      left++;
+    }
+    chars.add(s[right]);
+    right++;
+    maxLen = Math.max(maxLen, right - left);
+  }
+  
+  return maxLen;
+};
