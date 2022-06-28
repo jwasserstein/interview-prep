@@ -50,3 +50,25 @@ var canConstruct = function(ransomNote, magazine) {
     
     return true;
 };
+
+/**
+ * @param {string} ransomNote
+ * @param {string} magazine
+ * @return {boolean}
+ */
+var canConstruct = function(ransomNote, magazine) {
+    const count = {};
+    for (let i = 0; i < magazine.length; i++) {
+      const char = magazine[i];
+      count[char] = (count[char] || 0) + 1;
+    }
+    
+    for (let i = 0; i < ransomNote.length; i++) {
+      const char = ransomNote[i];
+      if (!(char in count)) return false;
+      count[char]--;
+      if (count[char] === 0) delete count[char];
+    }
+    
+    return true;
+};
