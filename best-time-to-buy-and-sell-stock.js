@@ -44,3 +44,23 @@ var maxProfit = function(prices) {
   
   return max;
 };
+
+/**
+ * @param {number[]} prices
+ * @return {number}
+ */
+var maxProfit = function(prices) {
+  const suffixMax = new Array(prices.length);
+  suffixMax[suffixMax.length-1] = prices[prices.length-1];
+  for (let i = prices.length-2; i >= 0; i--) {
+    suffixMax[i] = Math.max(suffixMax[i+1], prices[i]);
+  }
+  
+  let maxProfit = 0;
+  for (let i = 0; i < prices.length - 1; i++) {
+    const potentialProfit = suffixMax[i+1] - prices[i];
+    maxProfit = Math.max(maxProfit, potentialProfit);
+  }
+  
+  return maxProfit;
+};
