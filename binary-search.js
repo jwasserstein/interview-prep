@@ -47,3 +47,29 @@ var search = function(nums, target) {
     if(nums[left] === target) return left;
     return -1;
 };
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var search = function(nums, target) {
+    let left = 0;
+    let right = nums.length-1;
+    
+    if (nums[left] === target) return left;
+    if (nums[right] === target) return right;
+    
+    while (right - left > 1) {
+      const guess = Math.round((left + right) / 2);
+      if (nums[guess] < target) {
+        left = guess;
+      } else if (nums[guess] > target) {
+        right = guess;
+      } else {
+        return guess;
+      }
+    }
+    
+    return -1;
+};
