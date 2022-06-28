@@ -81,3 +81,35 @@ var isPalindrome = function(s) {
     return true;
 };
   
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isPalindrome = function(s) {
+  let left = 0;
+  let right = s.length-1;
+  
+  while (left < right) {
+    const leftCP = s[left].toLowerCase().codePointAt(0);
+    if (!isAlphanumeric(leftCP)) {
+      left++;
+      continue;
+    }
+    const rightCP = s[right].toLowerCase().codePointAt(0);
+    if (!isAlphanumeric(rightCP)) {
+      right--;
+      continue;
+    }
+    
+    if (leftCP !== rightCP) return false;
+    left++;
+    right--;
+  }
+  
+  return true;
+};
+
+function isAlphanumeric(cp) {
+  return (cp >= 97 && cp <= 122) // letter
+      || (cp >= 48 && cp <= 57); // number
+}
