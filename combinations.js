@@ -50,3 +50,24 @@ var combine = function(n, k) {
     recursiveCombo(0, k, []);
     return out;
 };
+
+/**
+ * @param {number} n
+ * @param {number} k
+ * @return {number[][]}
+ */
+var combine = function(n, k) {
+    const out = [];
+    function recursiveCombo(idx, remain, sol) {
+      if (remain === 0) return out.push(sol.slice());
+      
+      for (let i = idx; i <= n; i++) {
+        sol.push(i);
+        recursiveCombo(i+1, remain-1, sol);
+        sol.pop();
+      }
+    }
+    recursiveCombo(1, k, []);
+    return out;
+};
+  
