@@ -71,3 +71,17 @@ var maxSubArray = function(nums) {
   
   return Math.max(maxSum, suffixMax[0]);
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var maxSubArray = function(nums) {
+  let currSum = nums[0];
+  let globalSum = nums[0];
+  for (let i = 1; i < nums.length; i++) {
+    currSum = Math.max(nums[i], currSum + nums[i]);
+    globalSum = Math.max(globalSum, currSum);
+  }
+  return globalSum;
+};
