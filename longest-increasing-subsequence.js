@@ -58,3 +58,21 @@ function recursiveSequence(nums, idx, len, memo) {
   memo[idx] = maxLen + 1;
   return memo[idx];
 }
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var lengthOfLIS = function(nums) {
+  const dp = new Array(nums.length).fill(1);
+  
+  for (let i = nums.length-2; i >= 0; i--) {
+    for (let j = i + 1; j < nums.length; j++) {
+      if (nums[j] > nums[i]) {
+        dp[i] = Math.max(dp[i], dp[j] + 1);
+      }
+    }
+  }
+  
+  return Math.max(...dp);
+};
