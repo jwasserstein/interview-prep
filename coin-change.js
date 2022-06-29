@@ -92,3 +92,32 @@ var coinChange = function(coins, amount) {
   
   return out[amount] !== Infinity ? out[amount] : -1;
 };
+
+/**
+ * @param {number[]} coins
+ * @param {number} amount
+ * @return {number}
+ */
+var coinChange = function(coins, amount) {
+  const memo = {};
+  return memoizedCoinChange(coins, amount, memo);
+};
+
+function memoizedCoinChange(coins, amount, memo) {
+  if (amount === 0) return 0;
+  if (amount in memo) return memo[amount];
+  if (coins.includes(amount)) return 1;
+  
+  let minCount = Infinity;
+  for (let i = 0; i < coins.length; i++) {
+    if (coins[i] <= amount) {
+      const count = memoizedCoinChange(coins, amount - coins[i], memo);
+      if (count !== -1) {
+        minCount = Math.min(minCount, count + 1);
+      }
+    }
+  }
+  
+  memo[amount] = minCount !== Infinity ? minCount : -1;
+  return memo[amount];
+}
