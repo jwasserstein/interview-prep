@@ -104,3 +104,51 @@ var spiralOrder = function(matrix) {
       
     return out;
 };
+
+/**
+ * @param {number[][]} matrix
+ * @return {number[]}
+ */
+var spiralOrder = function(matrix) {
+  let top = 0;
+  let right = matrix[0].length - 1;
+  let bottom = matrix.length - 1;
+  let left = 0;
+  
+  const out = [];
+  
+  let row = 0;
+  let col = -1;
+  
+  while (left <= right || top <= bottom) {
+    // left to right
+    while (col < right && top <= bottom) {
+      col++;
+      out.push(matrix[row][col]);
+    }
+    top++;
+
+    // top to bottom
+    while (row < bottom && left <= right) {
+      row++;
+      out.push(matrix[row][col]);
+    }
+    right--;
+
+    // right to left
+    while (col > left && top <= bottom) {
+      col--;
+      out.push(matrix[row][col]);
+    }
+    bottom--;
+
+    // bottom to top
+    while (row > top && left <= right) {
+      row--;
+      out.push(matrix[row][col]);
+    }
+    left++;
+  }
+
+  return out;
+};
