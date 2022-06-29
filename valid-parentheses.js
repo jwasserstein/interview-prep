@@ -82,3 +82,32 @@ var isValid = function(s) {
 	
 	return stack.length === 0;
 };
+
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isValid = function(s) {
+  const map = {
+    '(': ')',
+    '{': '}',
+    '[': ']'
+  };
+  const stack = [];
+  
+  for (let i = 0; i < s.length; i++) {
+    const char = s[i];
+    if (char in map) {
+      stack.push(char);
+    } else {
+      const expected = map[stack[stack.length-1]];
+      if (char === expected) {
+        stack.pop();
+      } else {
+        return false;
+      }
+    }
+  }
+  
+  return stack.length === 0;
+};
