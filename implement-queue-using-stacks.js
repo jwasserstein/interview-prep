@@ -161,3 +161,60 @@ MyQueue.prototype.empty = function() {
  * var param_4 = obj.empty()
  */
   
+
+ var MyQueue = function() {
+    this.primary = [];
+    this.secondary = [];
+  };
+  
+  /** 
+   * @param {number} x
+   * @return {void}
+   */
+  MyQueue.prototype.push = function(x) {
+    this.primary.push(x);
+  };
+  
+  /**
+   * @return {number}
+   */
+  MyQueue.prototype.pop = function() {
+    while (this.primary.length > 0) {
+      this.secondary.push(this.primary.pop());
+    }
+    const val = this.secondary.pop();
+    while (this.secondary.length > 0) {
+      this.primary.push(this.secondary.pop());
+    }
+    return val;
+  };
+  
+  /**
+   * @return {number}
+   */
+  MyQueue.prototype.peek = function() {
+    while (this.primary.length > 0) {
+      this.secondary.push(this.primary.pop());
+    }
+    const val = this.secondary[this.secondary.length-1];
+    while (this.secondary.length > 0) {
+      this.primary.push(this.secondary.pop());
+    }
+    return val;
+  };
+  
+  /**
+   * @return {boolean}
+   */
+  MyQueue.prototype.empty = function() {
+    return this.primary.length === 0;
+  };
+  
+  /** 
+   * Your MyQueue object will be instantiated and called as such:
+   * var obj = new MyQueue()
+   * obj.push(x)
+   * var param_2 = obj.pop()
+   * var param_3 = obj.peek()
+   * var param_4 = obj.empty()
+   */
