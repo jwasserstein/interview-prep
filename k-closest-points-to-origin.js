@@ -73,3 +73,29 @@ var kClosest = function(points, k) {
   }
   return out;
 };
+
+/**
+ * @param {number[][]} points
+ * @param {number} k
+ * @return {number[][]}
+ */
+var kClosest = function(points, k) {
+  const pqueue = new MaxPriorityQueue();
+  
+  for (let i = 0; i < points.length; i++) {
+    const distSqrd = points[i][0]**2 + points[i][1]**2;
+    if (pqueue.size() < k) {
+      pqueue.enqueue(points[i], distSqrd);
+    } else if (distSqrd < pqueue.front().priority) { 
+      pqueue.dequeue();
+      pqueue.enqueue(points[i], distSqrd);
+    }
+  }
+  
+  const out = [];
+  while (pqueue.size() > 0) {
+    out.push(pqueue.dequeue().element);
+  }
+  
+  return out;
+};
