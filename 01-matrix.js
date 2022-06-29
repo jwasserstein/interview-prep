@@ -55,3 +55,47 @@ var updateMatrix = function(mat) {
 
   return out;
 }
+
+/**
+ * @param {number[][]} mat
+ * @return {number[][]}
+ */
+var updateMatrix = function(mat) {
+  const dist = mat.map(row => row.map(cell => Infinity));
+  
+  for (let i = 0; i < dist.length; i++) {
+    for (let j = 0; j < dist[i].length; j++) {
+      if (mat[i][j] === 0) {
+        dist[i][j] = 0;
+      } else {
+        let currDist = dist[i][j];
+        if (i > 0) {
+          currDist = Math.min(currDist, dist[i-1][j] + 1);
+        }
+        if (j > 0) {
+          currDist = Math.min(currDist, dist[i][j-1] + 1);
+        }
+        dist[i][j] = currDist;
+      }
+    }
+  }
+  
+  for (let i = dist.length-1; i >= 0; i--) {
+    for (let j = dist[i].length-1; j >= 0; j--) {
+      if (mat[i][j] === 0) {
+        dist[i][j] = 0;
+      } else {
+        let currDist = dist[i][j];
+        if (i < dist.length-1) {
+          currDist = Math.min(currDist, dist[i+1][j] + 1);
+        }
+        if (j < dist[i].length-1) {
+          currDist = Math.min(currDist, dist[i][j+1] + 1);
+        }
+        dist[i][j] = currDist;
+      }
+    }
+  }
+
+  return dist;
+};
