@@ -44,3 +44,30 @@ The value of each color in image[i][j] and newColor will be an integer in [0, 65
     
     return image;
 };
+
+/**
+ * @param {number[][]} image
+ * @param {number} sr
+ * @param {number} sc
+ * @param {number} color
+ * @return {number[][]}
+ */
+var floodFill = function(image, sr, sc, color) {
+    const startColor = image[sr][sc];
+    if (startColor === color) return image;
+  
+    image[sr][sc] = color;
+    if (sr > 0 && image[sr-1][sc] === startColor) {
+        floodFill(image, sr-1, sc, color);
+    }
+    if (sr < image.length-1 && image[sr+1][sc] === startColor) {
+        floodFill(image, sr+1, sc, color);
+    }
+    if (sc > 0 && image[sr][sc-1] === startColor) {
+        floodFill(image, sr, sc-1, color);
+    }
+    if (sc < image[sr].length-1 && image[sr][sc+1] === startColor) {
+        floodFill(image, sr, sc+1, color);
+    }
+    return image;
+};
