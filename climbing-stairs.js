@@ -40,3 +40,23 @@ Constraints:
   
   return stepCounts[n];
 };
+
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var climbStairs = function(n) {
+  if (n <= 2) return n;
+  
+  let oneStep = 2;
+  let twoStep = 1;
+  let curr;
+  
+  for (let i = n - 3; i >= 0; i--) {
+    curr = oneStep + twoStep;
+    twoStep = curr;
+    [oneStep, twoStep] = [twoStep, oneStep];
+  }
+  
+  return curr;
+};
