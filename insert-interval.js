@@ -116,3 +116,39 @@ var insert = function(intervals, newInterval) {
     return out;
 };
   
+/**
+ * @param {number[][]} intervals
+ * @param {number[]} newInterval
+ * @return {number[][]}
+ */
+var insert = function(intervals, newInterval) {
+  const out = [];
+  
+  let i = 0;
+  while (i < intervals.length && intervals[i][0] < newInterval[0]) {
+    out.push(intervals[i]);
+    i++;
+  }
+  
+  if (out.length > 0 && isOverlap(out[out.length-1], newInterval)) {
+    out[out.length-1] = merge(out[out.length-1], newInterval);
+  } else {
+    out.push(newInterval);
+  }
+  
+  while (i < intervals.length && isOverlap(out[out.length-1], intervals[i])) {
+    out[out.length-1] = merge(out[out.length-1], intervals[i]);
+    i++;
+  }
+  
+  out.push(...intervals.slice(i));
+  return out;
+};
+
+function isOverlap(a, b) {
+  return a[0] <= b[1] && a[1] >= b[0];
+}
+
+function merge(a, b) {
+  return [Math.min(a[0], b[0]), Math.max(a[1], b[1])];
+}
