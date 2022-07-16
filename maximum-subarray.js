@@ -85,3 +85,21 @@ var maxSubArray = function(nums) {
   }
   return globalSum;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var maxSubArray = function(nums) {
+  let currPrefix = 0;
+  let minPrefix = 0;
+  let maxSum = -Infinity;
+  for (let i = 0; i < nums.length; i++) {
+    currPrefix += nums[i];
+    maxSum = Math.max(maxSum, currPrefix - minPrefix);
+    minPrefix = Math.min(minPrefix, currPrefix);
+  }
+  
+  return maxSum;
+};
+
