@@ -47,3 +47,21 @@ var twoSum = function(nums, target) {
       seenNums.set(nums[i], i);
   }
 };
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[]}
+ */
+var twoSum = function(nums, target) {
+  const map = {};
+  
+  for (let i = 0; i < nums.length; i++) {
+    const subTarget = target - nums[i];
+    if (subTarget in map) {
+      return [i, map[subTarget]];
+    }
+    
+    map[nums[i]] = i;
+  }
+};
