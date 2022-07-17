@@ -57,4 +57,24 @@ var subsets = function(nums) {
     recursiveSet(0, []);
     return out;
 };
+
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var subsets = function(nums) {
+  const out = [];
+  function generateSets(sol, idx) {
+    out.push([...sol]);
+    
+    for (let i = idx; i < nums.length; i++) {
+      sol.push(nums[i]);
+      generateSets(sol, i+1);
+      sol.pop();
+    }
+  }
   
+  generateSets([], 0);
+  return out;
+};
