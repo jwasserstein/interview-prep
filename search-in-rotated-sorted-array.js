@@ -162,3 +162,31 @@ var search = function(nums, target) {
   
   return -1;
 };
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var search = function(nums, target) {
+  let left = 0;
+  let right = nums.length-1;
+  
+  while (left <= right) {
+    const guess = Math.floor((left + right) / 2);
+    
+    if (nums[guess] < nums[0] && target >= nums[0]) {
+      right = guess - 1;
+    } else if (nums[guess] >= nums[0] && target < nums[0]) {
+      left = guess + 1;
+    } else if (nums[guess] < target) {
+      left = guess + 1;
+    } else if (nums[guess] > target) {
+      right = guess - 1;
+    } else {
+      return guess;
+    }
+  }
+  
+  return -1;
+};
