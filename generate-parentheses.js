@@ -77,4 +77,28 @@ var generateParenthesis = function(n) {
     generateParenthesis(n, n, '');
     return out;
 };
+
+/**
+ * @param {number} n
+ * @return {string[]}
+ */
+var generateParenthesis = function(n) {
+  const out = [];
+  function generateParen(sol, remainingOpen, remainingClose) {
+    if (remainingClose === 0) return out.push(sol.join(''));
+    
+    if (remainingOpen > 0) {
+      sol.push('(');
+      generateParen(sol, remainingOpen-1, remainingClose);
+      sol.pop();
+    }
+    if (remainingClose > remainingOpen) {
+      sol.push(')');
+      generateParen(sol, remainingOpen, remainingClose-1);
+      sol.pop();
+    }
+  }
   
+  generateParen([], n, n);
+  return out;
+};
