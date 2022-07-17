@@ -91,3 +91,25 @@ var isAnagram = function(s, t) {
   }
   return Object.keys(sCount).length === 0;
 };
+
+/**
+ * @param {string} s
+ * @param {string} t
+ * @return {boolean}
+ */
+var isAnagram = function(s, t) {
+  const sMap = {};
+  for (let i = 0; i < s.length; i++) {
+    sMap[s[i]] = (sMap[s[i]] || 0) + 1;
+  }
+  
+  for (let i = 0; i < t.length; i++) {
+    if (!t[i] in sMap) {
+      return false;
+    }
+    sMap[t[i]]--;
+    if (sMap[t[i]] === 0) delete sMap[t[i]];
+  }
+  
+  return Object.keys(sMap).length === 0;
+};
