@@ -152,3 +152,46 @@ var spiralOrder = function(matrix) {
 
   return out;
 };
+
+/**
+ * @param {number[][]} matrix
+ * @return {number[]}
+ */
+var spiralOrder = function(matrix) {
+  const out = [matrix[0][0]];
+  
+  let top = 0;
+  let bottom = matrix.length-1;
+  let left = 0;
+  let right = matrix[0].length-1;
+  let row = 0;
+  let col = 0;
+  
+  while (top <= bottom && left <= right) {
+    while (col < right && top <= bottom) {
+      col++;
+      out.push(matrix[row][col]);
+    }
+    top++;
+
+    while (row < bottom && left <= right) {
+      row++;
+      out.push(matrix[row][col]);
+    }
+    right--;
+
+    while (col > left && top <= bottom) {
+      col--;
+      out.push(matrix[row][col]);
+    }
+    bottom--;
+
+    while (row > top && left <= right) {
+      row--;
+      out.push(matrix[row][col]);
+    }
+    left++;
+  }
+  
+  return out;
+};
