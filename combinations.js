@@ -70,4 +70,25 @@ var combine = function(n, k) {
     recursiveCombo(1, k, []);
     return out;
 };
+
+/**
+ * @param {number} n
+ * @param {number} k
+ * @return {number[][]}
+ */
+var combine = function(n, k) {
+  const out = [];
   
+  function choose(sol, start, end, subK) {
+    if (subK === 0) return out.push([...sol]);
+    
+    for (let i = start; i <= end; i++) {
+      sol.push(i);
+      choose(sol, i+1, end, subK-1);
+      sol.pop();
+    }
+  }
+  
+  choose([], 1, n, k);
+  return out;
+};
