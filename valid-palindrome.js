@@ -113,3 +113,38 @@ function isAlphanumeric(cp) {
   return (cp >= 97 && cp <= 122) // letter
       || (cp >= 48 && cp <= 57); // number
 }
+
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isPalindrome = function(s) {
+  let left = 0;
+  let right = s.length-1;
+  
+  while (left < right) {
+    while (!isAlphanumeric(s[left])) {
+      if (left >= right) return true;
+      left++;
+    }
+    while (!isAlphanumeric(s[right])) {
+      if (left >= right) return true;
+      right--;
+    }
+    
+    if (s[left].toLowerCase() !== s[right].toLowerCase()) return false;
+    left++;
+    right--;
+  }
+  
+  return true;
+};
+
+function isAlphanumeric(val) {
+  const codePoint = val.toLowerCase().codePointAt(0);
+
+  const isLetter = codePoint >= 97 && codePoint <= 122;
+  const isNumber = codePoint >= 48 && codePoint <= 57;
+  
+  return isLetter || isNumber;
+}
