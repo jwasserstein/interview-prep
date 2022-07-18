@@ -147,3 +147,32 @@ function mergeIntervals(a, b) {
   return [Math.min(a[0], b[0]), Math.max(a[1], b[1])];
 }
 
+/**
+ * @param {number[][]} intervals
+ * @return {number[][]}
+ */
+var merge = function(intervals) {
+  intervals.sort((a, b) => a[0] - b[0]);
+  
+  let j = 0;
+  for (let i = 1; i < intervals.length; i++) {
+    if (isOverlap(intervals[j], intervals[i])) {
+      intervals[j] = mergeIntervals(intervals[j], intervals[i]);
+    } else {
+      j++;
+      intervals[j] = intervals[i];
+    }
+  }
+  
+  intervals.splice(j + 1, intervals.length - j);
+  
+  return intervals;
+};
+
+function isOverlap(a, b) {
+  return a[1] >= b[0] && b[1] >= a[0];
+}
+  
+function mergeIntervals(a, b) {
+  return [Math.min(a[0], b[0]), Math.max(a[1], b[1])];
+}
