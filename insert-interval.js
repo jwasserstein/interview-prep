@@ -152,3 +152,76 @@ function isOverlap(a, b) {
 function merge(a, b) {
   return [Math.min(a[0], b[0]), Math.max(a[1], b[1])];
 }
+
+/**
+ * @param {number[][]} intervals
+ * @param {number[]} newInterval
+ * @return {number[][]}
+ */
+var insert = function(intervals, newInterval) {
+  let left = 0;
+  let right = intervals.length-1;
+  let guess = 0;
+  
+  while (left <= right) {
+    guess = Math.floor((left + right) / 2);
+    
+    if (guess === 0) {
+      if (newInterval[0] <= intervals[guess][0]) {
+        break;
+      } else {
+        guess++;
+        left = guess;
+      }
+    } else if (guess === intervals.length-1 && newInterval[0] > intervals[intervals.length-1][0]) {
+      guess++;
+      break;
+    } else if (intervals[guess-1][0] > newInterval[0]) {
+      right = guess - 1;
+    } else if (newInterval[0] > intervals[guess][0]) {
+      left = guess + 1;
+    } else {
+      break;
+    }
+  }
+  intervals.splice(guess, 0, newInterval);
+  
+  let mergeLoc;
+  if (guess === 0) {
+    mergeLoc = 0;
+    guess = 1;    
+  } else {
+    mergeLoc = guess - 1;
+    if (isOverlap(intervals[mergeLoc], intervals[guess])) {
+      intervals[mergeLoc] = merge(intervals[mergeLoc], intervals[guess]);
+      guess++;
+    } else {
+      mergeLoc++;
+      guess++;
+    }
+  }
+
+  while (guess < intervals.length && isOverlap(intervals[mergeLoc], intervals[guess])) {
+    intervals[mergeLoc] = merge(intervals[mergeLoc], intervals[guess]);
+    guess++;
+  }
+  mergeLoc++;
+  while (guess < intervals.length) {
+    [intervals[guess], intervals[mergeLoc]] = [intervals[mergeLoc], intervals[guess]];
+    guess++;
+    mergeLoc++;
+  }
+  
+  intervals.splice(mergeLoc, intervals.length - mergeLoc);
+  
+  return intervals;
+};
+
+
+function isOverlap(a, b) {
+  return a[0] <= b[1] && b[0] <= a[1];
+}
+
+function merge(a, b) {
+  return [Math.min(a[0], b[0]), Math.max(a[1], b[1])];
+}
