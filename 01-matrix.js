@@ -99,3 +99,37 @@ var updateMatrix = function(mat) {
 
   return dist;
 };
+
+/**
+ * @param {number[][]} mat
+ * @return {number[][]}
+ */
+var updateMatrix = function(mat) {
+  const out = new Array(mat.length).fill(0).map(() => new Array(mat[0].length));
+
+  for (let i = 0; i < mat.length; i++) {
+    for (let j = 0; j < mat[i].length; j++) {
+      if (mat[i][j] === 0) {
+        out[i][j] = 0;
+      } else {
+        const up = i > 0 ? out[i-1][j] + 1 : Infinity;
+        const left = j > 0 ? out[i][j-1] + 1 : Infinity;
+        out[i][j] = Math.min(up, left);
+      }
+    }
+  }
+  
+  for (let i = mat.length-1; i >= 0; i--) {
+    for (let j = mat[i].length-1; j >= 0; j--) {
+      if (mat[i][j] === 0) {
+        out[i][j] = 0;
+      } else {
+        const down = i < mat.length-1 ? out[i+1][j] + 1 : Infinity;
+        const right = j < mat[i].length-1 ? out[i][j+1] + 1 : Infinity;
+        out[i][j] = Math.min(down, right, out[i][j]);
+      }
+    }
+  }
+  
+  return out;
+};
