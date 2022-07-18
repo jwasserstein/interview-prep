@@ -130,3 +130,31 @@ function explore(grid, i, j) {
   if (j > 0 && grid[i][j-1] === '1') explore(grid, i, j-1);
   if (j < grid[i].length-1 && grid[i][j+1] === '1') explore(grid, i, j+1);
 }
+
+/**
+ * @param {character[][]} grid
+ * @return {number}
+ */
+var numIslands = function(grid) {
+  let islandCount = 0;
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      if (grid[i][j] === '1') {
+        islandCount++;
+        exploreIsland(i, j, grid);
+      }
+    }
+  }
+  return islandCount;
+};
+
+function exploreIsland(i, j, grid) {
+  if (grid[i][j] !== '1') return;
+
+  grid[i][j] = '0';
+  
+  if (i > 0)                exploreIsland(i-1, j, grid);
+  if (i < grid.length-1)    exploreIsland(i+1, j, grid);
+  if (j > 0)                exploreIsland(i, j-1, grid);
+  if (j < grid[i].length-1) exploreIsland(i, j+1, grid);
+}
