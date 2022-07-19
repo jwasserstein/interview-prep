@@ -99,3 +99,23 @@ var kClosest = function(points, k) {
   
   return out;
 };
+
+/**
+ * @param {number[][]} points
+ * @param {number} k
+ * @return {number[][]}
+ */
+var kClosest = function(points, k) {
+  const pqueue = new MinPriorityQueue();
+  
+  for (let i = 0; i < points.length; i++) {
+    pqueue.enqueue(points[i], points[i][0]**2 + points[i][1]**2);
+  }
+  
+  const out = new Array(k);
+  for (let i = 0; i < k; i++) {
+    out[i] = pqueue.dequeue().element;
+  }
+  
+  return out;
+};
