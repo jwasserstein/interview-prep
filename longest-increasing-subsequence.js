@@ -76,3 +76,30 @@ var lengthOfLIS = function(nums) {
   
   return Math.max(...dp);
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var lengthOfLIS = function(nums) {
+  const memo = {};
+  function recursiveLIS(idx) {
+    if (idx in memo) return memo[idx];
+    
+    let maxLen = 1;
+    for (let i = idx-1; i >= 0; i--) {
+      if (nums[i] < nums[idx]) {
+        maxLen = Math.max(maxLen, recursiveLIS(i) + 1);
+      }
+    }
+    
+    memo[idx] = maxLen;
+    return maxLen;
+  }
+  
+  let max = -Infinity;
+  for (let i = 0; i < nums.length; i++) {
+    max = Math.max(max, recursiveLIS(i));
+  }
+  return max;
+};
