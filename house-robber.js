@@ -56,3 +56,23 @@ function memoizedRob(nums, idx, memo) {
   memo[idx] = maxRob + nums[idx];
   return memo[idx];
 }
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var rob = function(nums) {
+  const memo = {};
+  function recursiveRob(idx) {
+    if (idx >= nums.length) return 0;
+    if (idx in memo) return memo[idx];
+    
+    const two = idx < nums.length - 2 ? recursiveRob(idx+2) : 0;
+    const one = idx < nums.length - 1 ? recursiveRob(idx+1) : 0;
+    
+    memo[idx] = Math.max(nums[idx] + two, one);
+    
+    return memo[idx];
+  }
+  return recursiveRob(0);
+};
