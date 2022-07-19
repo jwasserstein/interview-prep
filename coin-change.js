@@ -121,3 +121,29 @@ function memoizedCoinChange(coins, amount, memo) {
   memo[amount] = minCount !== Infinity ? minCount : -1;
   return memo[amount];
 }
+
+/**
+ * @param {number[]} coins
+ * @param {number} amount
+ * @return {number}
+ */
+var coinChange = function(coins, amount) {
+  const memo = {};
+  function recursiveCoin(subAmount) {
+    if (subAmount === 0) return 0;
+    if (subAmount in memo) return memo[subAmount];
+    
+    let minCoins = Infinity;
+    for (let i = 0; i < coins.length; i++) {
+      if (coins[i] <= subAmount) {
+        minCoins = Math.min(minCoins, recursiveCoin(subAmount - coins[i]) + 1);
+      }
+    }
+    
+    memo[subAmount] = minCoins;
+    return minCoins;
+  }
+  
+  const min = recursiveCoin(amount);
+  return min === Infinity ? -1 : min;
+};
