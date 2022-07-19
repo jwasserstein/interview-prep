@@ -77,3 +77,41 @@ var mergeKLists = function(lists) {
   
   return head;
 };
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode[]} lists
+ * @return {ListNode}
+ */
+var mergeKLists = function(lists) {
+  if (lists.length === 0) return null;
+
+  const pqueue = new MinPriorityQueue();
+  
+  for (let i = 0; i < lists.length; i++) {
+    if (lists[i]) {
+      pqueue.enqueue(lists[i], lists[i].val);
+    }
+  }
+  if (pqueue.size() === 0) return null;
+  
+  let head = pqueue.dequeue().element;
+  let curr = head;
+  if (head?.next) pqueue.enqueue(head.next, head.next.val);
+  
+  while (pqueue.size() > 0) {
+    let ll = pqueue.dequeue().element;
+    curr.next = ll;
+    curr = ll;
+    ll = ll.next;
+    if (ll) pqueue.enqueue(ll, ll.val);
+  }
+  
+  return head;
+};
