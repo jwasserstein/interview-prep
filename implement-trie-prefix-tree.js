@@ -111,3 +111,68 @@ Trie.prototype.startsWith = function(prefix) {
  * var param_2 = obj.search(word)
  * var param_3 = obj.startsWith(prefix)
  */
+
+
+var Trie = function() {
+  this.trie = new TrieNode('', false);
+};
+
+/** 
+ * @param {string} word
+ * @return {void}
+ */
+Trie.prototype.insert = function(word) {
+  let curr = this.trie;
+  for (let i = 0; i < word.length; i++) {
+    if (!(word[i] in curr)) {
+      curr[word[i]] = new TrieNode(`${curr.prefix}${word[i]}`, false);
+    }
+    curr = curr[word[i]];
+  }
+  curr.hasWord = true;
+};
+
+/** 
+ * @param {string} word
+ * @return {boolean}
+ */
+Trie.prototype.search = function(word) {
+  let curr = this.trie;
+  for (let i = 0; i < word.length; i++) {
+    if (!(word[i] in curr)) {
+      return false;
+    }
+    curr = curr[word[i]];
+  }
+  return curr.hasWord;
+};
+
+/** 
+ * @param {string} prefix
+ * @return {boolean}
+ */
+Trie.prototype.startsWith = function(prefix) {
+  let curr = this.trie;
+  for (let i = 0; i < prefix.length; i++) {
+    if (!(prefix[i] in curr)) {
+      return false;
+    }
+    curr = curr[prefix[i]];
+  }
+  return true;
+};
+
+/** 
+ * Your Trie object will be instantiated and called as such:
+ * var obj = new Trie()
+ * obj.insert(word)
+ * var param_2 = obj.search(word)
+ * var param_3 = obj.startsWith(prefix)
+ */
+
+class TrieNode {
+  constructor(prefix, hasWord) {
+    this.prefix = prefix;
+    this.hasWord = hasWord;
+  }
+}
