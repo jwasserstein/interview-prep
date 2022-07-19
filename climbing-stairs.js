@@ -60,3 +60,23 @@ var climbStairs = function(n) {
   
   return curr;
 };
+
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var climbStairs = function(n) {
+  if (n <= 2) return n;
+  
+  let two = 1;
+  let one = 2;
+  let curr = 3;
+  
+  for (let i = 3; i <= n; i++) {
+    curr = one + two;
+    two = one;
+    one = curr;
+  }
+  
+  return curr;
+};
