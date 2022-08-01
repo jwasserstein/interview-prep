@@ -80,3 +80,18 @@ var climbStairs = function(n) {
   
   return curr;
 };
+
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var climbStairs = function(n) {
+  const memo = { 1: 1, 2: 2 };
+  function memoizedClimb(m) {
+    if (m in memo) return memo[m];
+    
+    memo[m] = memoizedClimb(m-1) + memoizedClimb(m-2);
+    return memo[m];
+  }
+  return memoizedClimb(n);
+};
