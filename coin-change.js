@@ -147,3 +147,31 @@ var coinChange = function(coins, amount) {
   const min = recursiveCoin(amount);
   return min === Infinity ? -1 : min;
 };
+
+/**
+ * @param {number[]} coins
+ * @param {number} amount
+ * @return {number}
+ */
+var coinChange = function(coins, amount) {
+  const memo = {};
+  function recursiveCoins(amt) {
+    if (amt in memo) return memo[amt];
+    if (amt <= 0) {
+      memo[amt] = amt === 0 ? 0 : -1;
+      return memo[amt];
+    }
+    
+    let minCoins = Infinity;
+    for (let i = 0; i < coins.length; i++) {
+      const possibleSol = recursiveCoins(amt-coins[i]);
+      if (possibleSol !== -1) {
+        minCoins = Math.min(minCoins, possibleSol + 1);
+      }
+    }
+    
+    memo[amt] = minCoins === Infinity ? -1 : minCoins;
+    return memo[amt];
+  }
+  return recursiveCoins(amount);
+};
