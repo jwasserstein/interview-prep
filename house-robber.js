@@ -76,3 +76,34 @@ var rob = function(nums) {
   }
   return recursiveRob(0);
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var rob = function(nums) {
+  const memo = {};
+  function recursiveRob(start) {
+    if (start in memo) return memo[start];
+    
+    if (start >= nums.length) {
+      memo[start] = 0;
+      return memo[start];
+    }
+    if (start === nums.length-1) {
+      memo[start] = nums[start];
+      return memo[start];
+    }
+    if (start === nums.length-2) {
+      memo[start] = Math.max(nums[start], nums[start+1]);
+      return memo[start];
+    }
+    
+    memo[start] = Math.max(
+      nums[start] + recursiveRob(start + 2),
+      nums[start+1] + recursiveRob(start + 3)
+    );
+    return memo[start];
+  }
+  return recursiveRob(0);
+};
