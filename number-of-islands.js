@@ -158,3 +158,32 @@ function exploreIsland(i, j, grid) {
   if (j > 0)                exploreIsland(i, j-1, grid);
   if (j < grid[i].length-1) exploreIsland(i, j+1, grid);
 }
+
+/**
+ * @param {character[][]} grid
+ * @return {number}
+ */
+var numIslands = function(grid) {
+  let count = 0;
+  
+  for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[i].length; j++) {
+      if (grid[i][j] === '1') {
+        count++;
+        exploreIsland(grid, i, j);
+      }
+    }
+  }
+  
+  return count;
+};
+
+function exploreIsland(grid, row, col) {
+  if (grid[row][col] === '0') return;
+  
+  grid[row][col] = '0';
+  if (row > 0) exploreIsland(grid, row-1, col);
+  if (row < grid.length-1) exploreIsland(grid, row+1, col);
+  if (col > 0) exploreIsland(grid, row, col-1);
+  if (col < grid[row].length-1) exploreIsland(grid, row, col+1);
+}
