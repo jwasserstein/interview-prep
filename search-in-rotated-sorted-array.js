@@ -190,3 +190,31 @@ var search = function(nums, target) {
   
   return -1;
 };
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var search = function(nums, target) {
+  let left = 0;
+  let right = nums.length-1;
+  
+  while (left <= right) {
+    const guess = Math.floor((right + left) / 2);
+    
+    if (nums[guess] >= nums[0] && target < nums[0]) {
+      left = left + 1;
+    } else if (nums[guess] < nums[0] && target >= nums[0]) {
+      right = right - 1;
+    } else if (nums[guess] > target) {
+      right = right - 1;
+    } else if (nums[guess] < target) {
+      left = left + 1;
+    } else {
+      return guess;
+    }
+  }
+  
+  return -1;
+};
