@@ -102,3 +102,27 @@ var generateParenthesis = function(n) {
   generateParen([], n, n);
   return out;
 };
+
+/**
+ * @param {number} n
+ * @return {string[]}
+ */
+var generateParenthesis = function(n) {
+  const out = [];
+  function recursiveGenerate(open, close, sol) {
+    if (close === 0) return out.push(sol.join(''));
+    
+    if (close > open) {
+      sol.push(')');
+      recursiveGenerate(open, close-1, sol);
+      sol.pop();
+    }
+    if (open > 0) {
+      sol.push('(');
+      recursiveGenerate(open-1, close, sol);
+      sol.pop();
+    }
+  }
+  recursiveGenerate(n, n, []);
+  return out;
+};
