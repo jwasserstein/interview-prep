@@ -92,3 +92,23 @@ var combine = function(n, k) {
   choose([], 1, n, k);
   return out;
 };
+
+/**
+ * @param {number} n
+ * @param {number} k
+ * @return {number[][]}
+ */
+var combine = function(n, k) {
+  const out = [];
+  function recursiveCombination(start, sol) {
+    if (sol.length === k) return out.push([...sol]);
+    
+    for (let i = start; i <= n; i++) {
+      sol.push(i);
+      recursiveCombination(i+1, sol);
+      sol.pop();
+    }
+  }
+  recursiveCombination(1, []);
+  return out;
+};
