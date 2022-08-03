@@ -65,3 +65,21 @@ var twoSum = function(nums, target) {
     map[nums[i]] = i;
   }
 };
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number[]}
+ */
+var twoSum = function(nums, target) {
+  const seen = new Map();
+  
+  for (let i = 0; i < nums.length; i++) {
+    const complement = target - nums[i];
+    if (seen.has(complement)) {
+      return [i, seen.get(complement)];
+    } else {
+      seen.set(nums[i], i);
+    }
+  }
+};
