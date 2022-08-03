@@ -113,3 +113,30 @@ var isAnagram = function(s, t) {
   
   return Object.keys(sMap).length === 0;
 };
+
+/**
+ * @param {string} s
+ * @param {string} t
+ * @return {boolean}
+ */
+var isAnagram = function(s, t) {
+  const sCounts = new Map();
+  for (let i = 0; i < s.length; i++) {
+    sCounts.set(s[i], (sCounts.get(s[i]) || 0)+1);
+  }
+  
+  for (let i = 0; i < t.length; i++) {
+    let sCount = sCounts.get(t[i]);
+    if (!sCount) {
+      return false;
+    }
+    sCount--;
+    if (sCount === 0) {
+      sCounts.delete(t[i]);
+    } else {
+      sCounts.set(t[i], sCount);
+    }
+  }
+  
+  return sCounts.size === 0;
+};
