@@ -103,3 +103,19 @@ var maxSubArray = function(nums) {
   return maxSum;
 };
 
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var maxSubArray = function(nums) {
+  let minSum = 0;
+  let maxSum = nums[0];
+  let sum = 0;
+  for (let i = 0; i < nums.length; i++) {
+    sum += nums[i];
+    maxSum = Math.max(maxSum, sum - minSum);
+    minSum = Math.min(minSum, sum);
+  }
+  
+  return maxSum;
+};
