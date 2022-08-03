@@ -73,3 +73,27 @@ var productExceptSelf = function(nums) {
   return out;
 };
 
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var productExceptSelf = function(nums) {
+  const prefixProduct = new Array(nums.length);
+  const suffixProduct = new Array(nums.length);
+  prefixProduct[0] = 1;
+  suffixProduct[suffixProduct.length-1] = 1;
+  
+  for (let i = 1; i < prefixProduct.length; i++) {
+    prefixProduct[i] = prefixProduct[i-1] * nums[i-1];
+  }
+  for (let i = suffixProduct.length-2; i >= 0; i--) {
+    suffixProduct[i] = suffixProduct[i+1] * nums[i+1];
+  }
+  
+  const out = new Array(nums.length);
+  for (let i = 0; i < prefixProduct.length; i++) {
+    out[i] = prefixProduct[i] * suffixProduct[i];
+  }
+  
+  return out;
+};
