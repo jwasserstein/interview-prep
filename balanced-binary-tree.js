@@ -62,3 +62,31 @@ var isBalanced = function(root) {
   
   return recursiveBalanceCheck(root).balanced;
 };
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {boolean}
+ */
+var isBalanced = function(root) {
+  function recursiveBalance(node) {
+    if (!node) return { balanced: true, height: 0 };
+    
+    const left = recursiveBalance(node.left);
+    const right = recursiveBalance(node.right);
+    
+    const leftHeight = left.height;
+    const rightHeight = right.height;
+    const isBalanced = Math.abs(leftHeight - rightHeight) <= 1 && left.balanced && right.balanced;
+    
+    return { balanced: isBalanced, height: Math.max(leftHeight, rightHeight) + 1 };
+  }
+  return recursiveBalance(root).balanced;
+};
