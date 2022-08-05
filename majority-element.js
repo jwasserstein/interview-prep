@@ -58,3 +58,26 @@ var majorityElement = function(nums) {
     
     return maxKey;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var majorityElement = function(nums) {
+  const countMap = new Map();
+  
+  for (let i = 0; i < nums.length; i++) {
+    countMap.set(nums[i], (countMap.get(nums[i]) || 0) + 1);
+  }
+  
+  let maxCount = 0;
+  let majorityChar;
+  for (const [char, count] of countMap) {
+    if (count > maxCount) {
+      maxCount = count;
+      majorityChar = char;
+    }
+  }
+  
+  return majorityChar;
+};
