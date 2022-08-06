@@ -79,3 +79,41 @@ grid[i][j] is 0 or 1
     const minCost = costs[costs.length-1][costs[costs.length-1].length-1];
     return minCost !== Infinity ? minCost : -1;
 };
+
+/**
+ * @param {number[][]} grid
+ * @return {number}
+ */
+var shortestPathBinaryMatrix = function(grid) {
+  if (grid[0][0] === 1 || grid[grid.length-1][grid[0].length-1] === 1) return -1;
+  
+  const distances = grid.map(row => row.map(() => Infinity));
+  distances[0][0] = 1;
+  const visited = grid.map(row => row.map(() => false));
+  visited[0][0] = true;
+  const queue = [[0, 0]];
+  
+  const directions = [[-1, 0], [-1, 1], [0, 1], [1, 1], [1, 0], [1, -1], [0, -1], [-1, -1]];
+  
+  while (queue.length > 0) {
+    const [row, col] = queue.pop();
+
+    for (let i = 0; i < directions.length; i++) {
+      const [drow, dcol] = directions[i];
+      const nextRow = row + drow;
+      const nextCol = col + dcol;
+      
+      if (nextRow >= 0 && nextRow < grid.length && nextCol >= 0 && nextCol < grid[row].length) {
+        distances[nextRow][nextCol] = Math.min(distances[nextRow][nextCol], distances[row][col] + 1);
+        
+        if (!visited[nextRow][nextCol] && grid[nextRow][nextCol] === 0) {
+          queue.unshift([nextRow, nextCol]);
+          visited[nextRow][nextCol] = true;
+        }
+      }
+    }
+  }
+  
+  const result = distances[distances.length-1][distances[0].length-1];
+  return result === Infinity ? -1 : result;
+};
