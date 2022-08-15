@@ -85,3 +85,24 @@ var permute = function(nums) {
     recursivePermutation(nums, []);
     return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var permute = function(nums) {
+  const out = [];
+  function recursivePermutation(subNums, sol) {
+    if (subNums.length === 0) return out.push([...sol]);
+    
+    for (let i = 0; i < subNums.length; i++) {
+      const newSubNums = [...subNums];
+      newSubNums.splice(i, 1);
+      sol.push(subNums[i]);
+      recursivePermutation(newSubNums, sol);
+      sol.pop();
+    }
+  }
+  recursivePermutation(nums, []);
+  return out;
+};
