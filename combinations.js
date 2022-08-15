@@ -112,3 +112,23 @@ var combine = function(n, k) {
   recursiveCombination(1, []);
   return out;
 };
+
+/**
+ * @param {number} n
+ * @param {number} k
+ * @return {number[][]}
+ */
+var combine = function(n, k) {
+  const out = [];
+  function recursiveCombine(idx, subK, sol) {
+    if (subK === 0) return out.push([...sol]);
+    
+    for (let i = idx; i <= n - subK + 1; i++) {
+      sol.push(i);
+      recursiveCombine(i+1, subK-1, sol);
+      sol.pop();
+    }
+  }
+  recursiveCombine(1, k, []);
+  return out;
+};
