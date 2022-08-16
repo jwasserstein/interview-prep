@@ -183,4 +183,31 @@ function bucketSort(arr, n) {
       }
     }
 }  
+
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
+ */
+var topKFrequent = function(nums, k) {
+  const count = new Map();
+  for (let i = 0; i < nums.length; i++) {
+    count.set(nums[i], (count.get(nums[i]) || 0) + 1);
+  }
   
+  const pqueue = new MinPriorityQueue();
+  for (const [num, freq] of count) {
+    if (pqueue.size() < k || freq > pqueue.front().priority) {
+      pqueue.enqueue(num, freq);
+      if (pqueue.size() > k) {
+        pqueue.dequeue();
+      }
+    }
+  }
+  
+  const out = [];
+  while (pqueue.size() > 0) {
+    out.push(pqueue.dequeue().element);
+  }
+  return out;
+};
