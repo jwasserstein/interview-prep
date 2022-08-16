@@ -98,3 +98,34 @@ var letterCombinations = function(digits) {
     return out;
 };
   
+/**
+ * @param {string} digits
+ * @return {string[]}
+ */
+var letterCombinations = function(digits) {
+  if (digits.length === 0) return [];
+  
+  const letters = {
+    2: 'abc',
+    3: 'def',
+    4: 'ghi',
+    5: 'jkl',
+    6: 'mno',
+    7: 'pqrs',
+    8: 'tuv',
+    9: 'wxyz'
+  };
+  
+  const out = [];
+  function recursiveLetter(str, sol) {
+    if (str.length === 0) return out.push(sol);
+    
+    const digit = str[0];
+    const chars = letters[digit];
+    for (let i = 0; i < chars.length; i++) {
+      recursiveLetter(str.slice(1), `${sol}${chars[i]}`);
+    }
+  }
+  recursiveLetter(digits, '');
+  return out;
+};
