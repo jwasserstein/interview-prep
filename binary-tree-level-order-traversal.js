@@ -107,3 +107,34 @@ var levelOrder = function(root) {
   dfs(root, 0);
   return out;
 };
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number[][]}
+ */
+var levelOrder = function(root) {
+  if (!root) return [];
+
+  const out = [[]];
+  const queue = [root, null];
+  while (queue.length > 1) {
+    const node = queue.shift();
+    if (!node) {
+      out.push([]);
+      queue.push(null);
+    } else {
+      if (node.left) queue.push(node.left);
+      if (node.right) queue.push(node.right);
+      out[out.length-1].push(node.val);
+    }
+  }
+  return out;
+};
