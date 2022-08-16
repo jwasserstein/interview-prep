@@ -43,3 +43,33 @@ var longestPalindrome = function(s) {
   }
   return s.slice(palindromeIdxs[0], palindromeIdxs[1] + 1);
 };
+
+/**
+ * @param {string} s
+ * @return {string}
+ */
+var longestPalindrome = function(s) {
+  let lengthOfLongest = 1;
+  let stringOfLongest = s[0];
+  for (let i = 0.5; i < s.length; i += 0.5) {
+    let left = Math.floor(i);
+    let right = Math.ceil(i);
+    while (left > 0 && right < s.length-1 && s[left] === s[right]) {
+      left--;
+      right++;
+    }
+    
+    if(s[left] !== s[right]) {
+      right--;
+      left++;
+    }
+    
+    const len = right - left + 1;
+    if (len > lengthOfLongest) {
+      lengthOfLongest = len;
+      stringOfLongest = s.slice(left, right+1);
+    }
+  }
+  
+  return stringOfLongest;
+};
