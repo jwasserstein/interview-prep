@@ -116,3 +116,24 @@ var productExceptSelf = function(nums) {
   
   return out;
 };
+
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var productExceptSelf = function(nums) {
+  const out = new Array(nums.length);
+  out[0] = 1;
+  
+  for (let i = 1; i < nums.length; i++) {
+    out[i] = out[i-1] * nums[i-1];
+  }
+
+  let suffixProduct = 1;
+  for (let i = nums.length-2; i >= 0; i--) {
+    suffixProduct *= nums[i+1];
+    out[i] *= suffixProduct;
+  }
+  
+  return out;
+};
