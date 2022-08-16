@@ -63,3 +63,27 @@ Follow up: Can you come up with an algorithm that runs in O(m + n) time?
     swapPtr--;
   }
 };
+
+/**
+ * @param {number[]} nums1
+ * @param {number} m
+ * @param {number[]} nums2
+ * @param {number} n
+ * @return {void} Do not return anything, modify nums1 in-place instead.
+ */
+var merge = function(nums1, m, nums2, n) {
+  let target = nums1.length-1;
+  let ptr1 = m-1;
+  let ptr2 = n-1;
+  
+  while (ptr1 < target) {
+    if (nums1[ptr1] > nums2[ptr2]) {
+      nums1[target] = nums1[ptr1];
+      ptr1--;
+    } else {
+      nums1[target] = nums2[ptr2];
+      ptr2--;
+    }
+    target--;
+  }
+};
