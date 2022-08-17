@@ -137,3 +137,30 @@ var isValid = function(s) {
   
   return stack.length === 0;
 };
+
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isValid = function(s) {
+  const closingMap = {
+    ')': '(',
+    '}': '{',
+    ']': '['
+  };
+  const stack = [];
+  
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] in closingMap) {
+      const expectedOpening = closingMap[s[i]];
+      const lastOpening = stack.pop();
+      if (lastOpening !== expectedOpening) {
+        return false;
+      }
+    } else {
+      stack.push(s[i]);
+    }
+  }
+  
+  return stack.length === 0;
+};
