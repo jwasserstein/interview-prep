@@ -161,3 +161,56 @@ var shortestPathBinaryMatrix = function(grid) {
     return output[n-1][n-1];
   }
 };
+
+/**
+ * @param {number[][]} grid
+ * @return {number}
+ */
+var shortestPathBinaryMatrix = function(grid) {
+  if (grid[0][0] === 1) return -1;
+  const n = grid.length;
+  const pathLength = grid.map(row => row.map(() => Infinity));
+  pathLength[0][0] = 1;
+  const visited = grid.map(row => row.map(() => false));
+  visited[0][0] = true;
+  const queue = [[0, 0]]; // enqueue -> [...] -> dequeue
+  const directions = [
+    [-1, 0],
+    [-1, 1],
+    [0, 1],
+    [1, 1],
+    [1, 0],
+    [1, -1],
+    [0, -1],
+    [-1, -1]
+  ];
+  
+  while (queue.length > 0) {
+    const [row, col] = queue.pop();
+    
+    for (let i = 0; i < directions.length; i++) {
+      const newRow = row + directions[i][0];
+      const newCol = col + directions[i][1];
+      
+      if (newRow < 0 || newRow >= n) continue;
+      if (newCol < 0 || newCol >= n) continue;
+      if (grid[newRow][newCol] === 1) continue;
+      
+      pathLength[newRow][newCol] = Math.min(
+        pathLength[newRow][newCol],
+        pathLength[row][col] + 1,
+      );
+      
+      if (!visited[newRow][newCol]) {
+        queue.unshift([newRow, newCol]);
+        visited[newRow][newCol] = true;
+      }
+    }
+  }
+  
+  if (pathLength[n-1][n-1] === Infinity) {
+    return -1;
+  } else {
+    return pathLength[n-1][n-1];
+  }
+};
