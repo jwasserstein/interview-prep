@@ -93,3 +93,30 @@ var cloneGraph = function(node) {
   return recursiveClone(node);
 };
 
+/**
+ * // Definition for a Node.
+ * function Node(val, neighbors) {
+ *    this.val = val === undefined ? 0 : val;
+ *    this.neighbors = neighbors === undefined ? [] : neighbors;
+ * };
+ */
+
+/**
+ * @param {Node} node
+ * @return {Node}
+ */
+var cloneGraph = function(node) {
+  const visited = new Map();
+  function dfs(existingNode) {
+    if (!existingNode) return null;
+    if (visited.has(existingNode)) return visited.get(existingNode);
+    
+    const newNode = new Node(existingNode.val, []);
+    visited.set(existingNode, newNode);
+    for (let i = 0; i < existingNode.neighbors.length; i++) {
+      newNode.neighbors.push(dfs(existingNode.neighbors[i]));
+    }
+    return newNode;
+  }
+  return dfs(node);
+};
