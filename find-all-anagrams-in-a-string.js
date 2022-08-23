@@ -95,3 +95,43 @@ function generateCount(s) {
   }
   return countMap;
 }
+
+/**
+ * @param {string} s
+ * @param {string} p
+ * @return {number[]}
+ */
+var findAnagrams = function(s, p) {
+  const pCount = {};
+  for (let i = 0; i < p.length; i++) {
+    pCount[p[i]] = (pCount[p[i]] || 0) + 1;
+  }
+  
+  const out = [];
+  const currCount = { ...pCount };
+  let left = 0;
+  let right = 0;
+  while (right < s.length) {
+    if (s[right] in currCount) {
+      currCount[s[right]]--;
+      if (currCount[s[right]] === 0) {
+        delete currCount[s[right]];
+      }
+      right++;
+    } else if (left >= right) {
+      left++;
+      right++;
+    } else {
+      if (Object.keys(currCount).length === 0) {
+        out.push(left);
+      }
+      currCount[s[left]] = (currCount[s[left]] || 0) + 1;
+      left++;
+    }
+  }
+  if (Object.keys(currCount).length === 0) {
+    out.push(left);
+  }
+  
+  return out;
+};
