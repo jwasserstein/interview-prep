@@ -202,3 +202,37 @@ function findDistinct(nums, ptr, incr) {
   while (nums[ptr] === currVal) ptr += incr;
   return ptr;
 }
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var threeSum = function(nums) {
+  nums.sort((a, b) => a - b);
+  
+  const out = [];
+  let i = 0;
+  while (i < nums.length - 2) {
+    const first = nums[i];
+    let left = i+1;
+    let right = nums.length-1;
+    
+    while (left < right) {
+      const second = nums[left];
+      const third = nums[right];
+      const sum = first + second + third;
+      if (sum > 0) {
+        right--;
+      } else if (sum < 0) {
+        left++;
+      } else {
+        out.push([first, second, third]);
+        while (nums[left] === second && left < right) left++;
+      }
+    }
+    
+    while (nums[i] === first && i < nums.length - 2) i++;
+  }
+  
+  return out;
+};
