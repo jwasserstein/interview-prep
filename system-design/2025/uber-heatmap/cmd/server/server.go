@@ -19,6 +19,7 @@ type AggregatedLocations struct {
 	Latitude  float64
 	Longitude float64
 }
+
 type Heatmap struct {
 	Locations []AggregatedLocations
 }
@@ -42,13 +43,23 @@ func main() {
 
 	http.HandleFunc("GET /locations", GetGetLocationController(db))
 	http.HandleFunc("POST /locations", GetAddLocationController(db))
+	http.HandleFunc("OPTIONS /locations", GetOptionsController())
 
 	fmt.Println("starting server on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
+func GetOptionsController() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header()["Access-Control-Allow-Origin"] = []string{"*"}
+		w.WriteHeader(http.StatusOK)
+	}
+}
+
 func GetAddLocationController(db *sql.DB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header()["Access-Control-Allow-Origin"] = []string{"*"}
+
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			fmt.Println("failed to read body:", err)
@@ -75,6 +86,8 @@ func GetAddLocationController(db *sql.DB) func(http.ResponseWriter, *http.Reques
 
 func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header()["Access-Control-Allow-Origin"] = []string{"*"}
+
 		queryString := r.URL.Query()
 		lat := queryString["lat"]
 		if len(lat) == 0 {
@@ -88,12 +101,24 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 			return
 		}
 
+		radius := queryString["radius"]
+		if len(radius) == 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		squareSize := queryString["squareSize"]
+		if len(squareSize) == 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
 		query := `WITH Params AS (
 			SELECT
 				ST_SetSRID(ST_MakePoint($1, $2), 4326) AS target_point_geom,
-				(1000 / 3.28084) AS radius_meters,
+				CAST($3 AS int) AS radius_meters,
 				32610 AS proj_srid,
-				25.0 AS square_size_meters
+				CAST($4 as int) AS square_size_meters
 			),
 			PointsInRadius AS (
 				SELECT
@@ -102,8 +127,7 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 				FROM
 					location AS l, Params AS p
 				WHERE
-					l.loc IS NOT NULL
-					AND ST_DWithin(
+					ST_DWithin(
 						l.loc::geography,
 						p.target_point_geom::geography,
 						p.radius_meters
@@ -112,7 +136,6 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 			GridBounds AS (
 				SELECT ST_Extent(pir.location_proj) AS raw_bounds
 				FROM PointsInRadius pir
-				WHERE pir.location_proj IS NOT NULL
 			),
 			SquareGrid AS (
 				SELECT
@@ -136,10 +159,8 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 			JOIN
 				PointsInRadius pir ON ST_Intersects(h.geom, pir.location_proj)
 			GROUP BY
-				h.geom
-			ORDER BY
-				total_count DESC;`
-		rows, err := db.Query(query, long[0], lat[0])
+				h.geom;`
+		rows, err := db.Query(query, long[0], lat[0], radius[0], squareSize[0])
 		if err != nil {
 			log.Fatalf("query failed: %v\n", err)
 		}

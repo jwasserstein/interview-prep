@@ -16,14 +16,12 @@ type Location struct {
 }
 
 func reportLocation() {
-	numLocations := 10
-
-	time.Sleep(time.Duration(rand.Intn(5000)) * time.Millisecond)
+	numLocations := 50
 
 	for i := 0; i < numLocations; i++ {
 		req := Location{
-			Lat:  .001*(rand.Float64()-.5) + 37.77,
-			Long: .001*(rand.Float64()-.5) - 122.44,
+			Lat:  .1*(rand.Float64()-.5) + 37.77,
+			Long: .1*(rand.Float64()-.5) - 122.44,
 		}
 		marshaledReq, err := json.Marshal(req)
 		if err != nil {
@@ -41,13 +39,14 @@ func reportLocation() {
 }
 
 func main() {
-	numWorkers := 5
+	numWorkers := 100
 	wg := sync.WaitGroup{}
 	wg.Add(numWorkers)
 
 	for i := 0; i < numWorkers; i++ {
 		go func() {
 			defer wg.Done()
+			time.Sleep(time.Duration(rand.Intn(5000)) * time.Millisecond)
 			reportLocation()
 		}()
 	}
