@@ -1,1 +1,0 @@
-DROP INDEX idx_buckets_location;

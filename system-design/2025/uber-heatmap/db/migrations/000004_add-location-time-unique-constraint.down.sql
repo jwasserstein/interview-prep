@@ -1,2 +1,0 @@
-ALTER TABLE buckets
-DROP CONSTRAINT unique_bucket_time_location;

@@ -8,8 +8,12 @@ import (
 	"net/http"
 	"sync"
 	"time"
-	"uber-heatmap/pkg/location"
 )
+
+type Location struct {
+	Lat  float64
+	Long float64
+}
 
 func reportLocation() {
 	numLocations := 10
@@ -17,7 +21,7 @@ func reportLocation() {
 	time.Sleep(time.Duration(rand.Intn(5000)) * time.Millisecond)
 
 	for i := 0; i < numLocations; i++ {
-		req := location.Location{
+		req := Location{
 			Lat:  .001*(rand.Float64()-.5) + 37.77,
 			Long: .001*(rand.Float64()-.5) - 122.44,
 		}
@@ -27,7 +31,7 @@ func reportLocation() {
 			return
 		}
 
-		_, err = http.Post("http://localhost:8080/location", "application/json", bytes.NewBuffer(marshaledReq))
+		_, err = http.Post("http://localhost:8080/locations", "application/json", bytes.NewBuffer(marshaledReq))
 		if err != nil {
 			fmt.Printf("failed to report location: %v\n", err)
 		}
