@@ -37,7 +37,7 @@ func reportLocation() {
 }
 
 func main() {
-	numWorkers := 500
+	numWorkers := 5
 	wg := sync.WaitGroup{}
 	wg.Add(numWorkers)
 

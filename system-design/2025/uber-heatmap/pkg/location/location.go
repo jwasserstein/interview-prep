@@ -1,14 +1,12 @@
 package location
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"time"
-
-	"github.com/mmcloughlin/geohash"
-	"github.com/redis/go-redis/v9"
+	"strconv"
 )
 
 type Location struct {
@@ -16,13 +14,7 @@ type Location struct {
 	Long float64
 }
 
-func GetCacheKey(t time.Time, lat float64, long float64, precision uint) string {
-	now := t.Truncate(time.Minute).Format("2006/01/02_03:04PM") // pacific time
-	geo := geohash.EncodeWithPrecision(lat, long, precision)
-	return fmt.Sprintf("time:%s-location:%s", now, geo)
-}
-
-func GetCreateLocationController(redisClient *redis.Client) func(http.ResponseWriter, *http.Request) {
+func GetCreateLocationController(db *sql.DB) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
@@ -39,6 +31,6 @@ func GetCreateLocationController(redisClient *redis.Client) func(http.ResponseWr
 			return
 		}
 
-		redisClient.Incr(r.Context(), GetCacheKey(time.Now(), input.Lat, input.Long, 9))
+		UpdateBucket(db, strconv.FormatFloat(input.Lat, 'f', -1, 64), strconv.FormatFloat(input.Long, 'f', -1, 64), 1)
 	}
 }

@@ -1,0 +1,1 @@
+CREATE INDEX idx_buckets_location ON buckets USING GIST (location);

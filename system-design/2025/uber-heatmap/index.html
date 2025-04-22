@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>San Francisco Map with Marker</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha2056-p4NxQEIby+5WjX+gKxM3h/rBDjJ6pNJwJzKnfKj3pL9tB/3K9+g3A2g7w5X+06w5"
+          crossorigin=""/>
+</head>
+<body>
+
+    <div id="map" style="height: 800px; width: 100%;"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha2056-BxL9qGaqd2xSde/Q7u0s4g3a944q8t/2o0r2x5o0q6a0g9b8q5g8d3g2c4e6d9b"
+            crossorigin=""></script>
+
+    <script>
+        // Coordinates for roughly the center of San Francisco
+        const sanFranciscoCoords = [37.7749, -122.4194]; 
+
+        // Initialize the map
+        const map = L.map('map').setView(sanFranciscoCoords, 13); // setView(center_coords, zoom_level)
+
+        // Add a tile layer (using OpenStreetMap)
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        // Add a marker to the map
+        const marker = L.marker(sanFranciscoCoords).addTo(map);
+
+        // Optional: Add a popup to the marker
+        marker.bindPopup("<b>Hello!</b><br>This is roughly the center of SF.").openPopup();
+
+    </script>
+
+</body>
+</html>
