@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"math"
 	"math/rand"
 	"net/http"
 	"sync"
@@ -16,12 +17,18 @@ type Location struct {
 }
 
 func reportLocation() {
-	numLocations := 50
+	numLocations := 10
+
+	centerLat := 37.77
+	centerLong := -122.44
+	cityWidth := 10000.0
+	deltaLat := cityWidth / 111111 / 2
+	deltaLong := cityWidth / (111111 * math.Cos(centerLat+deltaLat) / 2)
 
 	for i := 0; i < numLocations; i++ {
 		req := Location{
-			Lat:  .1*(rand.Float64()-.5) + 37.77,
-			Long: .1*(rand.Float64()-.5) - 122.44,
+			Lat:  deltaLat*(2*rand.Float64()-1) + centerLat,
+			Long: deltaLong*(2*rand.Float64()-1) + centerLong,
 		}
 		marshaledReq, err := json.Marshal(req)
 		if err != nil {

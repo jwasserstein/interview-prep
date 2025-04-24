@@ -89,20 +89,35 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 		w.Header()["Access-Control-Allow-Origin"] = []string{"*"}
 
 		queryString := r.URL.Query()
-		lat := queryString["lat"]
-		if len(lat) == 0 {
+		latStrs := queryString["lat"]
+		if len(latStrs) == 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		lat, err := strconv.ParseFloat(latStrs[0], 64)
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		long := queryString["long"]
-		if len(long) == 0 {
+		longStrs := queryString["long"]
+		if len(longStrs) == 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		long, err := strconv.ParseFloat(longStrs[0], 64)
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		radius := queryString["radius"]
-		if len(radius) == 0 {
+		radiusStrs := queryString["radius"]
+		if len(radiusStrs) == 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		radius, err := strconv.ParseInt(radiusStrs[0], 10, 64)
+		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -160,7 +175,7 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 				PointsInRadius pir ON ST_Intersects(h.geom, pir.location_proj)
 			GROUP BY
 				h.geom;`
-		rows, err := db.Query(query, long[0], lat[0], radius[0], squareSize[0])
+		rows, err := db.Query(query, long, lat, radius, squareSize[0])
 		if err != nil {
 			log.Fatalf("query failed: %v\n", err)
 		}
