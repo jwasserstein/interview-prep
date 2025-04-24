@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 
@@ -15,9 +16,11 @@ import (
 )
 
 type AggregatedLocations struct {
-	Count     int
-	Latitude  float64
-	Longitude float64
+	NorthWestLatitude  float64
+	NorthWestLongitude float64
+	SouthEastLatitude  float64
+	SouthEastLongitude float64
+	Count              int
 }
 
 type Heatmap struct {
@@ -88,94 +91,64 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header()["Access-Control-Allow-Origin"] = []string{"*"}
 
-		queryString := r.URL.Query()
-		latStrs := queryString["lat"]
-		if len(latStrs) == 0 {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		lat, err := strconv.ParseFloat(latStrs[0], 64)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		longStrs := queryString["long"]
-		if len(longStrs) == 0 {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		long, err := strconv.ParseFloat(longStrs[0], 64)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		radiusStrs := queryString["radius"]
-		if len(radiusStrs) == 0 {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-		radius, err := strconv.ParseInt(radiusStrs[0], 10, 64)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		squareSize := queryString["squareSize"]
-		if len(squareSize) == 0 {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
+		northWestLat := getParam("northWestLat", r.URL.Query())
+		northWestLong := getParam("northWestLong", r.URL.Query())
+		southEastLat := getParam("southEastLat", r.URL.Query())
+		southEastLong := getParam("southEastLong", r.URL.Query())
 
 		query := `WITH Params AS (
-			SELECT
-				ST_SetSRID(ST_MakePoint($1, $2), 4326) AS target_point_geom,
-				CAST($3 AS int) AS radius_meters,
-				32610 AS proj_srid,
-				CAST($4 as int) AS square_size_meters
-			),
-			PointsInRadius AS (
-				SELECT
-					l.location_id,
-					ST_Transform(l.loc, p.proj_srid) AS location_proj
-				FROM
-					location AS l, Params AS p
-				WHERE
-					ST_DWithin(
-						l.loc::geography,
-						p.target_point_geom::geography,
-						p.radius_meters
-					)
-			),
-			GridBounds AS (
-				SELECT ST_Extent(pir.location_proj) AS raw_bounds
-				FROM PointsInRadius pir
-			),
-			SquareGrid AS (
-				SELECT
-					 ST_SetSRID(t.geom, p.proj_srid) AS geom,
-					 t.i,
-					 t.j
-				FROM
-					 GridBounds gb
-				CROSS JOIN
-					 Params p
-				CROSS JOIN
-					 LATERAL ST_SquareGrid(p.square_size_meters, ST_SetSRID(gb.raw_bounds, p.proj_srid)) as t
-				WHERE gb.raw_bounds IS NOT NULL AND NOT ST_IsEmpty(gb.raw_bounds)
-			)
-			SELECT
-				ST_Y(ST_PointOnSurface(ST_Transform(h.geom, 4326))) AS square_center_lat,
-				ST_X(ST_PointOnSurface(ST_Transform(h.geom, 4326))) AS square_center_lon,
-				COUNT(pir.location_id) AS total_count
-			FROM
-				SquareGrid h
-			JOIN
-				PointsInRadius pir ON ST_Intersects(h.geom, pir.location_proj)
-			GROUP BY
-				h.geom;`
-		rows, err := db.Query(query, long, lat, radius, squareSize[0])
+SELECT
+	ST_SetSRID(ST_MakeEnvelope(
+		$2,
+		$3,
+		$4,
+		$1 
+	), 4326) AS bbox_geom_4326,
+	CAST($5 AS int) AS square_size_meters,
+	CAST($6 AS int) AS proj_srid
+),
+PointsInBounds AS (
+    SELECT
+        l.location_id,
+        ST_Transform(l.loc, p.proj_srid) AS location_proj
+    FROM
+        location AS l, Params AS p
+    WHERE
+        ST_Contains(p.bbox_geom_4326, l.loc)
+),
+GridBounds AS (
+    SELECT ST_Extent(pib.location_proj) AS raw_bounds
+    FROM PointsInBounds pib
+),
+SquareGrid AS (
+    SELECT
+         ST_SetSRID(t.geom, p.proj_srid) AS geom,
+         t.i,
+         t.j 
+    FROM
+         GridBounds gb
+    CROSS JOIN
+         Params p
+    CROSS JOIN
+         LATERAL ST_SquareGrid(p.square_size_meters, ST_SetSRID(gb.raw_bounds, p.proj_srid)) as t
+    WHERE
+        gb.raw_bounds IS NOT NULL AND NOT ST_IsEmpty(gb.raw_bounds)
+)
+SELECT
+    ST_YMax(ST_Envelope(ST_Transform(h.geom, 4326))) AS nw_latitude,
+    ST_XMin(ST_Envelope(ST_Transform(h.geom, 4326))) AS nw_longitude,
+    ST_YMin(ST_Envelope(ST_Transform(h.geom, 4326))) AS se_latitude,
+    ST_XMax(ST_Envelope(ST_Transform(h.geom, 4326))) AS se_longitude,
+    COUNT(pib.location_id) AS total_count
+FROM
+    SquareGrid h
+JOIN
+    PointsInBounds pib ON ST_Intersects(h.geom, pib.location_proj)
+GROUP BY
+    h.geom
+ORDER BY
+    nw_latitude DESC, nw_longitude ASC;`
+		rows, err := db.Query(query, northWestLat, northWestLong, southEastLat, southEastLong, 200, 32610)
 		if err != nil {
 			log.Fatalf("query failed: %v\n", err)
 		}
@@ -184,7 +157,7 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 		data := make([]AggregatedLocations, 0)
 		for rows.Next() {
 			next := AggregatedLocations{}
-			err := rows.Scan(&next.Latitude, &next.Longitude, &next.Count)
+			err := rows.Scan(&next.NorthWestLatitude, &next.NorthWestLongitude, &next.SouthEastLatitude, &next.SouthEastLongitude, &next.Count)
 			if err != nil {
 				log.Fatalf("failed to read row: %v\n", err)
 			}
@@ -202,4 +175,16 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 		w.WriteHeader(http.StatusOK)
 		w.Write(jsonBytes)
 	}
+}
+
+func getParam(key string, values url.Values) float64 {
+	strs := values[key]
+	if len(strs) == 0 {
+		return 0.0
+	}
+	parsed, err := strconv.ParseFloat(strs[0], 64)
+	if err != nil {
+		return 0.0
+	}
+	return parsed
 }

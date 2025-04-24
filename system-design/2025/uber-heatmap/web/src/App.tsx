@@ -5,8 +5,10 @@ import debounce from 'debounce';
 import './App.css';
 
 interface Location {
-  Latitude: number;
-  Longitude: number;
+  NorthWestLatitude: number;
+  NorthWestLongitude: number;
+  SouthEastLatitude: number;
+  SouthEastLongitude: number;
   Count: number;
 }
 interface LocationsResponse {
@@ -14,15 +16,16 @@ interface LocationsResponse {
 }
 
 async function onRefresh(
-  lat: number,
-  long: number,
-  radius: number,
+  northWestLat: number,
+  northWestLong: number,
+  southEastLat: number,
+  southEastLong: number,
   setLocations: (locations: Location[]) => void,
   setLoadTime: (loadTime: number) => void
 ): Promise<void> {
   const startTime = Date.now();
 
-  const response = await fetch(`http://localhost:8080/locations?lat=${lat}&long=${long}&radius=${radius.toFixed(0)}&squareSize=${Math.round(radius/10)}`);
+  const response = await fetch(`http://localhost:8080/locations?northWestLat=${northWestLat}&northWestLong=${northWestLong}&southEastLat=${southEastLat}&southEastLong=${southEastLong}`);
   const json = (await response.json()) as LocationsResponse;
 
   setLocations(json.Locations);
@@ -37,26 +40,36 @@ function Map({
   const [locations, setLocations] = useState<Location[]>([]);
 
   const map = useMap();
-  const lat = map.getCenter().lat;
-  const long = map.getCenter().lng;
-  const radius = Math.abs(map.getBounds().getNorthWest().lat - map.getBounds().getSouthWest().lat)*111_111;
+  const northWestLat = map.getBounds().getNorthWest().lat;
+  const northWestLong = map.getBounds().getNorthWest().lng;
+  const southEastLat = map.getBounds().getSouthEast().lat;
+  const southEastLong = map.getBounds().getSouthEast().lng;
 
-  const onUpdate = useRef(debounce((lat: number, long: number, radius: number) => {
+  const onUpdate = useRef(debounce((northWestLat: number, northWestLong: number, southEastLat: number, southEastLong: number) => {
     const url = new URL(window.location.href);
     const params = new URLSearchParams(url.search);
-    if (params.has('lat')) params.delete('lat');
-    if (params.has('long')) params.delete('long');
-    if (params.has('radius')) params.delete('radius');
+    if (params.has('northWestLat')) params.delete('northWestLat');
+    if (params.has('northWestLong')) params.delete('northWestLong');
+    if (params.has('southEastLat')) params.delete('southEastLat');
+    if (params.has('southEastLong')) params.delete('southEastLong');
     
-    params.set('lat', lat.toFixed(7));
-    params.set('long', long.toFixed(7));
-    params.set('radius', radius.toFixed(0));
+    params.set('northWestLat', northWestLat.toFixed(7));
+    params.set('northWestLong', northWestLong.toFixed(7));
+    params.set('southWestLat', southEastLat.toFixed(7));
+    params.set('southWestLong', southEastLong.toFixed(7));
 
-    onRefresh(lat, long, radius, setLocations, setLoadTime);
+    onRefresh(
+      northWestLat,
+      northWestLong,
+      southEastLat,
+      southEastLong,
+      setLocations,
+      setLoadTime,
+    );
 
     window.history.pushState({}, '', `${url.pathname}?${params.toString()}`);
   }, 100));
-  useMapEvent('move', () => onUpdate.current(lat, long, radius));
+  useMapEvent('move', () => onUpdate.current(northWestLat, northWestLong, southEastLat, southEastLong));
 
   const maxCount = Math.max(...locations.map(l => l.Count));
 
@@ -70,8 +83,8 @@ function Map({
         locations.map(l => (
           <Polygon
             pathOptions={{ color: 'black', fillColor: 'black', opacity: l.Count/maxCount, fillOpacity: l.Count/maxCount }}
-            positions={getSquareCorners(l.Latitude, l.Longitude, Math.floor(radius/10))}
-            key={`${l.Latitude},${l.Longitude}`}
+            positions={getSquareCorners(l)}
+            key={Object.values(l).join(',')}
           />
         ))
       }
@@ -95,18 +108,13 @@ function App() {
   );
 }
 
-function getSquareCorners(lat: number, long: number, squareSize: number): LatLngExpression[] {
-  const deltaLat = squareSize/111_111/2;
-  const deltaLong = squareSize/(111_111*Math.cos(lat+deltaLat))/2;
-
-  const corners: LatLngExpression[] = [
-    { lat: lat - deltaLat, lng: long + deltaLong },
-    { lat: lat + deltaLat, lng: long + deltaLong },
-    { lat: lat + deltaLat, lng: long - deltaLong },
-    { lat: lat - deltaLat, lng: long - deltaLong },
+function getSquareCorners(location: Location): LatLngExpression[] {
+  return [
+    { lat: location.NorthWestLatitude, lng: location.NorthWestLongitude },
+    { lat: location.NorthWestLatitude, lng: location.SouthEastLongitude },
+    { lat: location.SouthEastLatitude, lng: location.SouthEastLongitude },
+    { lat: location.SouthEastLatitude, lng: location.NorthWestLongitude },
   ];
-
-  return corners;
 }
 
 export default App;
