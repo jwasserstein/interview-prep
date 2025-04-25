@@ -1,3 +1,5 @@
+github.com/StefanSchroeder/Golang-Ellipsoid v0.0.0-20241222205244-01047a497824 h1:JfY52GBggEaf7CcYWeiZRxjspTOAwpZq1Zaw87SCiwU=
+github.com/StefanSchroeder/Golang-Ellipsoid v0.0.0-20241222205244-01047a497824/go.mod h1:6/CMhlAhQVieQT0vgVvr6VfWJj21dQV7Ns6yOLuLnF8=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/lib/pq v1.10.9 h1:YXG7RB+JIjhP29X+OtkiDnYaXQwpS4JEWq7dtCCRUEw=

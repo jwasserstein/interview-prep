@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
 
+	"github.com/StefanSchroeder/Golang-Ellipsoid/ellipsoid"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -95,6 +97,7 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 		northWestLong := getParam("northWestLong", r.URL.Query())
 		southEastLat := getParam("southEastLat", r.URL.Query())
 		southEastLong := getParam("southEastLong", r.URL.Query())
+		squareSize := getSquareSize(northWestLat, northWestLong, southEastLat, southEastLong)
 
 		query := `WITH Params AS (
 SELECT
@@ -148,7 +151,7 @@ GROUP BY
     h.geom
 ORDER BY
     nw_latitude DESC, nw_longitude ASC;`
-		rows, err := db.Query(query, northWestLat, northWestLong, southEastLat, southEastLong, 200, 32610)
+		rows, err := db.Query(query, northWestLat, northWestLong, southEastLat, southEastLong, squareSize, 32610)
 		if err != nil {
 			log.Fatalf("query failed: %v\n", err)
 		}
@@ -187,4 +190,13 @@ func getParam(key string, values url.Values) float64 {
 		return 0.0
 	}
 	return parsed
+}
+
+func getSquareSize(nwLat float64, nwLong float64, seLat float64, seLong float64) int {
+	e := ellipsoid.Init("WGS84", ellipsoid.Degrees, ellipsoid.Meter, ellipsoid.LongitudeIsSymmetric, ellipsoid.BearingIsSymmetric)
+	x, y := e.Displacement(nwLat, nwLong, seLat, seLong)
+
+	greater := math.Max(math.Abs(x), math.Abs(y))
+
+	return int(math.Floor(greater / 30.0))
 }
