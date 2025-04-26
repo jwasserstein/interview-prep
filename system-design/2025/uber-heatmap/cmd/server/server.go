@@ -12,10 +12,14 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/StefanSchroeder/Golang-Ellipsoid/ellipsoid"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
+
+const originLat = 37.7910
+const originLong = -122.4285
+const dLat = 0.0015
+const dLong = 0.0035
 
 type AggregatedLocations struct {
 	NorthWestLatitude  float64
@@ -80,8 +84,10 @@ func GetAddLocationController(db *sql.DB) func(http.ResponseWriter, *http.Reques
 			return
 		}
 
-		query := "INSERT INTO location (loc) VALUES (ST_SetSRID(ST_MakePoint($1, $2), 4326));"
-		rows, err := db.Query(query, strconv.FormatFloat(input.Long, 'f', -1, 64), strconv.FormatFloat(input.Lat, 'f', -1, 64))
+		lat, long := getBoundingBoxCenter(input.Lat, input.Long)
+
+		query := "INSERT INTO location (loc, count) VALUES (ST_SetSRID(ST_MakePoint($1, $2), 4326), 1) ON CONFLICT (loc) DO UPDATE SET count = location.count + 1;"
+		rows, err := db.Query(query, strconv.FormatFloat(long, 'f', -1, 64), strconv.FormatFloat(lat, 'f', -1, 64))
 		if err != nil {
 			log.Fatalf("update bucket failed: %v\n", err)
 		}
@@ -97,61 +103,9 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 		northWestLong := getParam("northWestLong", r.URL.Query())
 		southEastLat := getParam("southEastLat", r.URL.Query())
 		southEastLong := getParam("southEastLong", r.URL.Query())
-		squareSize := getSquareSize(northWestLat, northWestLong, southEastLat, southEastLong)
 
-		query := `WITH Params AS (
-SELECT
-	ST_SetSRID(ST_MakeEnvelope(
-		$2,
-		$3,
-		$4,
-		$1 
-	), 4326) AS bbox_geom_4326,
-	CAST($5 AS int) AS square_size_meters,
-	CAST($6 AS int) AS proj_srid
-),
-PointsInBounds AS (
-    SELECT
-        l.location_id,
-        ST_Transform(l.loc, p.proj_srid) AS location_proj
-    FROM
-        location AS l, Params AS p
-    WHERE
-        ST_Contains(p.bbox_geom_4326, l.loc)
-),
-GridBounds AS (
-    SELECT ST_Extent(pib.location_proj) AS raw_bounds
-    FROM PointsInBounds pib
-),
-SquareGrid AS (
-    SELECT
-         ST_SetSRID(t.geom, p.proj_srid) AS geom,
-         t.i,
-         t.j 
-    FROM
-         GridBounds gb
-    CROSS JOIN
-         Params p
-    CROSS JOIN
-         LATERAL ST_SquareGrid(p.square_size_meters, ST_SetSRID(gb.raw_bounds, p.proj_srid)) as t
-    WHERE
-        gb.raw_bounds IS NOT NULL AND NOT ST_IsEmpty(gb.raw_bounds)
-)
-SELECT
-    ST_YMax(ST_Envelope(ST_Transform(h.geom, 4326))) AS nw_latitude,
-    ST_XMin(ST_Envelope(ST_Transform(h.geom, 4326))) AS nw_longitude,
-    ST_YMin(ST_Envelope(ST_Transform(h.geom, 4326))) AS se_latitude,
-    ST_XMax(ST_Envelope(ST_Transform(h.geom, 4326))) AS se_longitude,
-    COUNT(pib.location_id) AS total_count
-FROM
-    SquareGrid h
-JOIN
-    PointsInBounds pib ON ST_Intersects(h.geom, pib.location_proj)
-GROUP BY
-    h.geom
-ORDER BY
-    nw_latitude DESC, nw_longitude ASC;`
-		rows, err := db.Query(query, northWestLat, northWestLong, southEastLat, southEastLong, squareSize, 32610)
+		query := `SELECT ST_Y(location.loc), ST_X(location.loc), count FROM location WHERE ST_Contains(ST_SetSRID(ST_MakeEnvelope($2,$3,$4,$1), 4326), location.loc);`
+		rows, err := db.Query(query, northWestLat, northWestLong, southEastLat, southEastLong)
 		if err != nil {
 			log.Fatalf("query failed: %v\n", err)
 		}
@@ -159,10 +113,22 @@ ORDER BY
 
 		data := make([]AggregatedLocations, 0)
 		for rows.Next() {
-			next := AggregatedLocations{}
-			err := rows.Scan(&next.NorthWestLatitude, &next.NorthWestLongitude, &next.SouthEastLatitude, &next.SouthEastLongitude, &next.Count)
+			lat := new(float64)
+			long := new(float64)
+			count := new(int)
+
+			err := rows.Scan(lat, long, count)
 			if err != nil {
 				log.Fatalf("failed to read row: %v\n", err)
+			}
+
+			nwLat, nwLong, seLat, seLong := getBoundingBoxCorners(*lat, *long)
+			next := AggregatedLocations{
+				NorthWestLatitude:  nwLat,
+				NorthWestLongitude: nwLong,
+				SouthEastLatitude:  seLat,
+				SouthEastLongitude: seLong,
+				Count:              *count,
 			}
 			data = append(data, next)
 		}
@@ -192,11 +158,22 @@ func getParam(key string, values url.Values) float64 {
 	return parsed
 }
 
-func getSquareSize(nwLat float64, nwLong float64, seLat float64, seLong float64) int {
-	e := ellipsoid.Init("WGS84", ellipsoid.Degrees, ellipsoid.Meter, ellipsoid.LongitudeIsSymmetric, ellipsoid.BearingIsSymmetric)
-	x, y := e.Displacement(nwLat, nwLong, seLat, seLong)
+func getBoundingBoxCenter(lat float64, long float64) (float64, float64) {
+	centerLat := math.Floor((lat-originLat)/dLat)*dLat + originLat + dLat/2
+	centerLong := math.Floor((long-originLong)/dLong)*dLong + originLong + dLong/2
 
-	greater := math.Max(math.Abs(x), math.Abs(y))
-
-	return int(math.Floor(greater / 30.0))
+	return centerLat, centerLong
 }
+
+func getBoundingBoxCorners(lat float64, long float64) (float64, float64, float64, float64) {
+	return lat - dLat/2, long - dLong/2, lat + dLat/2, long + dLong/2
+}
+
+/*
+
+dLat = 0.0015
+dLong = 0.0035
+
+center = 37.7910, -122.4285
+
+*/
