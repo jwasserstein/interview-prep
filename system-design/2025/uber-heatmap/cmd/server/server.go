@@ -11,6 +11,9 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
+	"sync"
+	"time"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -50,9 +53,19 @@ func main() {
 	}
 	defer db.Close()
 
+	cache := &map[string]int{}
+	lock := &sync.Mutex{}
+
 	http.HandleFunc("GET /locations", GetGetLocationController(db))
-	http.HandleFunc("POST /locations", GetAddLocationController(db))
+	http.HandleFunc("POST /locations", GetAddLocationController(cache, lock))
 	http.HandleFunc("OPTIONS /locations", GetOptionsController())
+
+	go func() {
+		for {
+			time.Sleep(time.Second)
+			flushCacheToDB(db, cache, lock)
+		}
+	}()
 
 	fmt.Println("starting server on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -65,7 +78,7 @@ func GetOptionsController() func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetAddLocationController(db *sql.DB) func(http.ResponseWriter, *http.Request) {
+func GetAddLocationController(cache *map[string]int, lock *sync.Mutex) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header()["Access-Control-Allow-Origin"] = []string{"*"}
 
@@ -86,12 +99,10 @@ func GetAddLocationController(db *sql.DB) func(http.ResponseWriter, *http.Reques
 
 		lat, long := getBoundingBoxCenter(input.Lat, input.Long)
 
-		query := "INSERT INTO location (loc, count) VALUES (ST_SetSRID(ST_MakePoint($1, $2), 4326), 1) ON CONFLICT (loc) DO UPDATE SET count = location.count + 1;"
-		rows, err := db.Query(query, strconv.FormatFloat(long, 'f', -1, 64), strconv.FormatFloat(lat, 'f', -1, 64))
-		if err != nil {
-			log.Fatalf("update bucket failed: %v\n", err)
-		}
-		defer rows.Close()
+		key := fmt.Sprintf("%v,%v", lat, long)
+		lock.Lock()
+		(*cache)[key]++
+		lock.Unlock()
 	}
 }
 
@@ -146,6 +157,40 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 	}
 }
 
+func flushCacheToDB(db *sql.DB, cache *map[string]int, lock *sync.Mutex) {
+	if len(*cache) == 0 {
+		return
+	}
+
+	lock.Lock()
+	cacheCopy := *cache
+	*cache = map[string]int{}
+	lock.Unlock()
+
+	num := 1
+	strs := []string{}
+	values := []any{}
+	for latLongPair, count := range cacheCopy {
+		splitLatLongPair := strings.Split(latLongPair, ",")
+		lat := splitLatLongPair[0]
+		long := splitLatLongPair[1]
+
+		strs = append(strs, fmt.Sprintf("(ST_SetSRID(ST_MakePoint($%d, $%d), 4326), $%d)", num, num+1, num+2))
+		values = append(values, long, lat, fmt.Sprintf("%d", count))
+
+		num += 3
+	}
+
+	fmt.Printf("going to flush %v row(s)\n", len(strs))
+
+	query := "INSERT INTO location (loc, count) VALUES " + strings.Join(strs, ", ") + " ON CONFLICT (loc) DO UPDATE SET count = location.count + EXCLUDED.count;"
+	rows, err := db.Query(query, values...)
+	if err != nil {
+		log.Fatalf("update bucket failed: %v\n", err)
+	}
+	defer rows.Close()
+}
+
 func getParam(key string, values url.Values) float64 {
 	strs := values[key]
 	if len(strs) == 0 {
@@ -168,12 +213,3 @@ func getBoundingBoxCenter(lat float64, long float64) (float64, float64) {
 func getBoundingBoxCorners(lat float64, long float64) (float64, float64, float64, float64) {
 	return lat - dLat/2, long - dLong/2, lat + dLat/2, long + dLong/2
 }
-
-/*
-
-dLat = 0.0015
-dLong = 0.0035
-
-center = 37.7910, -122.4285
-
-*/
