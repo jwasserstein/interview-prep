@@ -16,7 +16,7 @@ type Location struct {
 }
 
 func reportLocation() {
-	numLocations := 50
+	numLocations := 20
 
 	northWestLat, northWestLong := 37.801057, -122.515872
 	southEastLat, southEastLong := 37.730492, -122.373565
@@ -42,7 +42,7 @@ func reportLocation() {
 }
 
 func main() {
-	numWorkers := 100
+	numWorkers := 1000
 	wg := sync.WaitGroup{}
 	wg.Add(numWorkers)
 

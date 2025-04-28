@@ -1,0 +1,1 @@
+CREATE INDEX idx_location_time on location(created_at);

@@ -120,14 +120,17 @@ SELECT
 	CAST($5 AS int) AS square_size_meters,
 	CAST($6 AS int) AS proj_srid
 ),
+PointsInTimeRange AS (
+	SELECT * FROM location WHERE created_at > NOW() - INTERVAL '2 minutes'
+),
 PointsInBounds AS (
     SELECT
-        l.location_id,
-        ST_Transform(l.loc, p.proj_srid) AS location_proj
+        pitr.location_id,
+        ST_Transform(pitr.loc, p.proj_srid) AS location_proj
     FROM
-        location AS l, Params AS p
+        PointsInTimeRange AS pitr, Params AS p
     WHERE
-        ST_Contains(p.bbox_geom_4326, l.loc)
+        ST_Contains(p.bbox_geom_4326, pitr.loc)
 ),
 GridBounds AS (
     SELECT ST_Extent(pib.location_proj) AS raw_bounds
