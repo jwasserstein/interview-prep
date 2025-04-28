@@ -107,7 +107,6 @@ func GetGetLocationController(db *sql.DB) func(w http.ResponseWriter, r *http.Re
 		northWestLong := getParam("northWestLong", r.URL.Query())
 		southEastLat := getParam("southEastLat", r.URL.Query())
 		southEastLong := getParam("southEastLong", r.URL.Query())
-		squareSize := getSquareSize(northWestLat, northWestLong, southEastLat, southEastLong)
 
 		query := `WITH Params AS (
 SELECT
@@ -117,54 +116,49 @@ SELECT
 		$4,
 		$1 
 	), 4326) AS bbox_geom_4326,
-	CAST($5 AS int) AS square_size_meters,
-	CAST($6 AS int) AS proj_srid
+	CAST($5 AS NUMERIC) AS cell_width_degrees,
+	CAST($6 AS NUMERIC) AS cell_height_degrees
 ),
 PointsInTimeRange AS (
-	SELECT * FROM location WHERE created_at > NOW() - INTERVAL '2 minutes'
+	SELECT * FROM location WHERE created_at > NOW() - INTERVAL '20 minutes'
 ),
-PointsInBounds AS (
+PointsInGridArea AS (
     SELECT
         pitr.location_id,
-        ST_Transform(pitr.loc, p.proj_srid) AS location_proj
+        pitr.loc
     FROM
         PointsInTimeRange AS pitr, Params AS p
     WHERE
         ST_Contains(p.bbox_geom_4326, pitr.loc)
 ),
-GridBounds AS (
-    SELECT ST_Extent(pib.location_proj) AS raw_bounds
-    FROM PointsInBounds pib
-),
-SquareGrid AS (
+PointCellIndices AS (
     SELECT
-         ST_SetSRID(t.geom, p.proj_srid) AS geom,
-         t.i,
-         t.j 
+        pib.location_id,
+        -- Calculate the integer grid index based on point coordinates and cell size
+        -- FLOOR((X - origin_X) / cell_width) -> Assuming origin is (0,0) for lat/lon grid
+        FLOOR(ST_X(pib.loc) / p.cell_width_degrees)::INTEGER AS i,
+        FLOOR(ST_Y(pib.loc) / p.cell_height_degrees)::INTEGER AS j
     FROM
-         GridBounds gb
-    CROSS JOIN
-         Params p
-    CROSS JOIN
-         LATERAL ST_SquareGrid(p.square_size_meters, ST_SetSRID(gb.raw_bounds, p.proj_srid)) as t
-    WHERE
-        gb.raw_bounds IS NOT NULL AND NOT ST_IsEmpty(gb.raw_bounds)
+        PointsInGridArea pib,
+        Params p
+), AggregatedCells AS (
+    SELECT
+        pci.i,
+        pci.j,
+        COUNT(pci.location_id) AS total_count
+    FROM PointCellIndices pci
+    GROUP BY pci.i, pci.j
 )
 SELECT
-    ST_YMax(ST_Envelope(ST_Transform(h.geom, 4326))) AS nw_latitude,
-    ST_XMin(ST_Envelope(ST_Transform(h.geom, 4326))) AS nw_longitude,
-    ST_YMin(ST_Envelope(ST_Transform(h.geom, 4326))) AS se_latitude,
-    ST_XMax(ST_Envelope(ST_Transform(h.geom, 4326))) AS se_longitude,
-    COUNT(pib.location_id) AS total_count
+    (ac.j * p.cell_height_degrees + p.cell_height_degrees)::NUMERIC AS nw_latitude,
+    (ac.i * p.cell_width_degrees)::NUMERIC AS nw_longitude,
+    (ac.j * p.cell_height_degrees)::NUMERIC AS se_latitude,
+    (ac.i * p.cell_width_degrees + p.cell_width_degrees)::NUMERIC AS se_longitude,
+    ac.total_count
 FROM
-    SquareGrid h
-JOIN
-    PointsInBounds pib ON ST_Intersects(h.geom, pib.location_proj)
-GROUP BY
-    h.geom
-ORDER BY
-    nw_latitude DESC, nw_longitude ASC;`
-		rows, err := db.Query(query, northWestLat, northWestLong, southEastLat, southEastLong, squareSize, 32610)
+    AggregatedCells ac,
+    Params p`
+		rows, err := db.Query(query, northWestLat, northWestLong, southEastLat, southEastLong, .002, .002)
 		if err != nil {
 			log.Fatalf("query failed: %v\n", err)
 		}
