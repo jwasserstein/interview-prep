@@ -11,6 +11,9 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
+	"sync"
+	"time"
 
 	"github.com/StefanSchroeder/Golang-Ellipsoid/ellipsoid"
 	"github.com/joho/godotenv"
@@ -46,9 +49,19 @@ func main() {
 	}
 	defer db.Close()
 
+	cache := &[]Location{}
+	lock := &sync.Mutex{}
+
 	http.HandleFunc("GET /locations", GetGetLocationController(db))
-	http.HandleFunc("POST /locations", GetAddLocationController(db))
+	http.HandleFunc("POST /locations", GetAddLocationController(db, cache, lock))
 	http.HandleFunc("OPTIONS /locations", GetOptionsController())
+
+	go func() {
+		for {
+			time.Sleep(time.Second)
+			flushCacheToDB(db, cache, lock)
+		}
+	}()
 
 	fmt.Println("starting server on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -61,7 +74,7 @@ func GetOptionsController() func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func GetAddLocationController(db *sql.DB) func(http.ResponseWriter, *http.Request) {
+func GetAddLocationController(db *sql.DB, cache *[]Location, lock *sync.Mutex) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header()["Access-Control-Allow-Origin"] = []string{"*"}
 
@@ -80,12 +93,9 @@ func GetAddLocationController(db *sql.DB) func(http.ResponseWriter, *http.Reques
 			return
 		}
 
-		query := "INSERT INTO location (loc) VALUES (ST_SetSRID(ST_MakePoint($1, $2), 4326));"
-		rows, err := db.Query(query, strconv.FormatFloat(input.Long, 'f', -1, 64), strconv.FormatFloat(input.Lat, 'f', -1, 64))
-		if err != nil {
-			log.Fatalf("update bucket failed: %v\n", err)
-		}
-		defer rows.Close()
+		lock.Lock()
+		*cache = append(*cache, input)
+		lock.Unlock()
 	}
 }
 
@@ -199,4 +209,34 @@ func getSquareSize(nwLat float64, nwLong float64, seLat float64, seLong float64)
 	greater := math.Max(math.Abs(x), math.Abs(y))
 
 	return int(math.Floor(greater / 30.0))
+}
+
+func flushCacheToDB(db *sql.DB, cache *[]Location, lock *sync.Mutex) {
+	if len(*cache) == 0 {
+		return
+	}
+
+	lock.Lock()
+	cacheCopy := *cache
+	*cache = []Location{}
+	lock.Unlock()
+
+	num := 1
+	strs := []string{}
+	values := []any{}
+	for _, location := range cacheCopy {
+		strs = append(strs, fmt.Sprintf("(ST_SetSRID(ST_MakePoint($%d, $%d), 4326))", num, num+1))
+		values = append(values, location.Long, location.Lat)
+
+		num += 2
+	}
+
+	fmt.Printf("going to flush %v row(s)\n", len(strs))
+
+	query := "INSERT INTO location (loc) VALUES " + strings.Join(strs, ", ") + ";"
+	rows, err := db.Query(query, values...)
+	if err != nil {
+		log.Fatalf("update bucket failed: %v\n", err)
+	}
+	defer rows.Close()
 }
